@@ -350,7 +350,7 @@ $app->post('/cms/save', $checkUser, function () use ($app) {
 	$soc = isset($_POST['soc']) ? stripslashes($_POST['soc']) : "";
 
 	// make url title
-	if(!$utt) {
+	if(!$utt || $utt=="...") {
 		$utt = utt($tit);
 	}
 
@@ -358,6 +358,7 @@ $app->post('/cms/save', $checkUser, function () use ($app) {
 	$dat = date('Y-m-d',strtotime($dat));
 
 	if ($tb=="settings"){
+		echo "update settings";
 		$dbh = getDb();
 		$sth = $dbh->prepare("UPDATE settings SET tit=?, txt=?, adr=?, ctt=?, soc=? WHERE id=1");
 		$sth->execute(array($tit,$txt,$adr,$ctt,$soc));
@@ -371,6 +372,8 @@ $app->post('/cms/save', $checkUser, function () use ($app) {
 		print_r($sth->errorInfo());
 	}
 	$baseUrl = getBaseUrl();
+
+	echo "tb: ".$tb;
 	if($tb=="settings") {
 		$rdr = $baseUrl.'/cms/settings';
 	} elseif($tb=="site_fct") {
@@ -380,7 +383,7 @@ $app->post('/cms/save', $checkUser, function () use ($app) {
 	} elseif($tb=="site_clt") {
 		$rdr = $baseUrl.'/cms/clients/'.$id.'/'.$utt;
 	} else {
-		$rdr = $baseUrl.'/cms/cnt/'.$id.'/'.$utt;
+		$rdr = $baseUrl.'/cms/articles/'.$id.'/'.$utt;
 	}
 	$app->redirect($rdr);
 });

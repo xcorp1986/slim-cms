@@ -16,7 +16,7 @@
 
 
 			{% if ( cnt.0.tb == 'articles' ) or tb == ( 'articles' ) or ( cnt.0.tb == 'site_csp' ) or tb == ( 'site_csp' )  %}
-			<input type="text" name="tit" class="tit" value="{{ cnt.0.txt.tit }}" placeholder="Title">
+			<input type="text" name="tit" class="tit" autofocus="autofocus" value="{{ cnt.0.txt.tit }}" placeholder="Title">
 			{% endif %}
 			<input type="text" name="utt" class="utt hidden" value="{{ cnt.0.txt.utt }}" placeholder="URL title">
 			<input type="text" name="typ" class="typ hidden" value="{{ typ }}{{ cnt.0.txt.typ }}" placeholder="cnt">
@@ -72,8 +72,8 @@
 		%}
 		{% if cnt.0.txt.id !="" %}
 		<div class="pub">
-			<a href="{{ baseURL }}/cms/{{ path.3 }}/{{ cnt.0.txt.id }}/{{ cnt.0.txt.utt }}/concept" class="con {% if cnt.0.txt.pub == '0' %} sel {% endif %}">Concept</a>
-			<a href="{{ baseURL }}/cms/{{ path.3 }}/{{ cnt.0.txt.id }}/{{ cnt.0.txt.utt }}/public" class="pub {% if cnt.0.txt.pub == '1' %} sel {% endif %} last">Public</a>
+			<a href="{{ baseURL }}/cms/{{ path.2 }}/{{ cnt.0.txt.id }}/{{ cnt.0.txt.utt }}/concept" class="con {% if cnt.0.txt.pub == '0' %} sel {% endif %}">Concept</a>
+			<a href="{{ baseURL }}/cms/{{ path.2 }}/{{ cnt.0.txt.id }}/{{ cnt.0.txt.utt }}/public" class="pub {% if cnt.0.txt.pub == '1' %} sel {% endif %} last">Public</a>
 		</div>
 		{% endif %}
 		{% endif %}
