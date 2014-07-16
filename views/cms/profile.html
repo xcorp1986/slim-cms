@@ -1,0 +1,60 @@
+{% extends "cms/base.html" %}
+
+{% block content %}
+
+
+
+
+
+{% if notf %}
+<div class="g6">
+	<div class="notification">
+	<p>{{ notf }}</p>
+	</div>
+</div>
+{% endif %}
+
+			<div class="item" id="profile">
+			
+			
+				<h1>Wachtwoord wijzigen</h1>
+				<form enctype="multipart/form-data" action="{{ baseURL }}/cms/psw" method="post" name="main">
+					<div class="g2">
+						<input type="text" name="usr" class="usr hidden" value="{{ usr.0.nam }}">
+						<h2>{{ usr.0.nam }}</h2>
+					</div>
+					<div class="g2">
+						<input type="text" name="psw" class="psw" placeholder="nieuw wachtwoord">
+					</div>
+					<div class="g2 last">
+						<input type="submit" name="submit" value="Opslaan" class="subm">
+					</div>
+				</form>
+			
+			
+			
+				<form enctype="multipart/form-data" action="{{ baseURL }}/cms/save" method="post" name="main">
+							  {% for cnt_row in cnt %}
+
+					<div class="fields">
+						<input type="text" name="id" class="id" value="{{ cnt_row.txt.id }}">
+						<input type="text" name="tb" class="tb" value="{{ cnt_row.txt.tb }}">
+						<input type="text" name="typ" class="typ" value="{{ cnt_row.txt.typ }}">
+						<input type="text" name="tit" class="tit" value="{{ cnt_row.txt.tit }}">
+						<input type="text" name="utt" class="utt" value="{{ cnt_row.txt.utt }}">
+						<div class="g2">
+							<h2>{{ cnt_row.txt.tit }}</h2>
+						</div>
+						<div class="g2">					
+							<input type="text" name="txt" class="txt" value="{{ cnt_row.txt.txt }}" placeholder="Text">
+						</div>
+						<div class="g2 last">
+							<input type="submit" name="submit" value="Opslaan" class="subm">
+						</div>
+					</div>
+			  {% endfor %}
+				</form>
+
+			</div>
+
+{% endblock %}

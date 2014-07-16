@@ -1,0 +1,116 @@
+{% extends "cms/base.html" %}
+
+{% block content %}
+
+<div class="item" id="settings">
+	<h1>Instellingen</h1>
+	<form enctype="multipart/form-data" action="{{ baseURL }}/cms/save" method="post" name="main">
+		<hr>
+		<input type="text" name="tb" value="site_stt" class="hidden">
+
+		<!-- tit -->
+		<div class="g1" style="clear:left">
+			<h2><label for="tit">Titel website</label></h2>
+		</div>
+		<div class="g2">
+			<input type="text" name="tit" value="{{ stt.tit }}" placeholder="">
+		</div>
+		<input type="text" name="utt" value="{{ stt.utt }}" class="hidden">
+		<hr>
+
+		<!-- tekst -->
+		<div class="g1" style="clear:left">
+			<h2><h2><label for="tit">Beschrijving</label></h2></h2>
+		</div>
+		<div class="g4 last">
+			<input type="text" name="txt" value="{{ stt.txt|raw }}" placeholder="Geef een korte beschrijving, o.a. voor zoekmachines">
+		</div>
+		<hr>
+
+		<!-- adr -->
+		<div class="g1" style="clear:left">
+			<h2><h2><label for="tit">Adres</label></h2></h2>
+		</div>
+		<div class="g4 last">
+			<!-- textarea toolbar -->
+			<div id="toolbar" style="display: none;" class="toolbar">
+				<a data-wysihtml5-command="bold" title="CTRL+B"><i class="fa fa-bold"></i></a>
+				<a data-wysihtml5-command="italic" title="CTRL+I"><i class="fa fa-italic"></i></a>
+				<a data-wysihtml5-command="createLink" {% if ( cnt.0.tb == 'shop_prd' ) %}class="last"{% endif %}><i class="fa fa-link"></i></a>
+				<div data-wysihtml5-dialog="createLink" style="display: none;">
+					<label>
+						Link:
+						<input data-wysihtml5-dialog-field="href" value="http://">
+					</label>
+					<a data-wysihtml5-dialog-action="save">OK</a>&nbsp;<a data-wysihtml5-dialog-action="cancel">Cancel</a>
+				</div>
+			</div>
+			<!-- textarea -->
+			<textarea id="textarea" onkeyup="textAreaAdjust(this)" name="adr" placeholder="Voor contactpagina en footer">{{ stt.adr|raw }}</textarea>
+		</div>
+		<hr>
+
+		<!-- ctt -->
+		<div class="g1" style="clear:left">
+			<h2><h2><label for="tit">Contact</label></h2></h2>
+		</div>
+		<div class="g4 last">
+			<!-- textarea toolbar -->
+			<div id="toolbar2" style="display: none;" class="toolbar">
+				<a data-wysihtml5-command="bold" title="CTRL+B"><i class="fa fa-bold"></i></a>
+				<a data-wysihtml5-command="italic" title="CTRL+I"><i class="fa fa-italic"></i></a>
+				<a data-wysihtml5-command="createLink" {% if ( cnt.0.tb == 'shop_prd' ) %}class="last"{% endif %}><i class="fa fa-link"></i></a>
+				<div data-wysihtml5-dialog="createLink" style="display: none;">
+					<label>
+						Link:
+						<input data-wysihtml5-dialog-field="href" value="http://">
+					</label>
+					<a data-wysihtml5-dialog-action="save">OK</a>&nbsp;<a data-wysihtml5-dialog-action="cancel">Cancel</a>
+				</div>
+			</div>
+			<!-- textarea -->
+			<textarea id="textarea2" onkeyup="textAreaAdjust(this)" name="ctt" placeholder="Voor contactpagina en footer">{{ stt.ctt|raw }}</textarea>
+		</div>
+		<hr>
+
+		<!-- soc -->
+		<div class="g1" style="clear:left">
+			<h2><h2><label for="tit">Sociaal</label></h2></h2>
+		</div>
+		<div class="g4 last">
+
+			<!-- textarea toolbar -->
+			<div id="toolbar3" style="display: none;" class="toolbar">
+				<a data-wysihtml5-command="bold" title="CTRL+B"><i class="fa fa-bold"></i></a>
+				<a data-wysihtml5-command="italic" title="CTRL+I"><i class="fa fa-italic"></i></a>
+				<a data-wysihtml5-command="createLink" {% if ( cnt.0.tb == 'shop_prd' ) %}class="last"{% endif %}><i class="fa fa-link"></i></a>
+				<div data-wysihtml5-dialog="createLink" style="display: none;">
+					<label>
+						Link:
+						<input data-wysihtml5-dialog-field="href" value="http://">
+					</label>
+					<a data-wysihtml5-dialog-action="save">OK</a>&nbsp;<a data-wysihtml5-dialog-action="cancel">Cancel</a>
+				</div>
+			</div>
+			<!-- textarea -->
+			<textarea id="textarea3" onkeyup="textAreaAdjust(this)" placeholder="Voor footer" name="soc">{{ stt.soc|raw }}</textarea>
+		</div>
+		<hr>
+
+		<!-- sticky bottom -->
+		<div id="sticky">
+			<div class="g6 last">
+				<input type="submit" name="submit" value="Opslaan" class="subm">
+			</div>
+		</div>
+
+
+	</form>
+
+
+
+
+</div>
+<div class="push">&nbsp;</div>
+
+{% endblock %}

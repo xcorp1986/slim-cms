@@ -1,0 +1,532 @@
+#! /usr/bin/env php
+<?php
+/**
+ * PHPloy - A PHP Deployment Script
+ *
+ * @package PHPloy
+ * @author Baki Goxhaj <banago@gmail.com>
+ * @author Fadion Dashi <jonidashi@gmail.com>
+ * @author Bruno De Barros <bruno@terraduo.com>
+ * @link http://wplancer.com
+ * @licence MIT Licence
+ * @version 1.3.4
+ */
+
+/**
+ * Run deployment
+ */
+try {
+    $phploy = new PHPloy();
+} catch (Exception $e) {
+     echo $e->getMessage();
+}
+
+/**
+ * PHPloy Class
+ */
+class PHPloy
+{
+
+    /**
+     * @var string $revision
+     */
+    public $revision;
+
+    /**
+     * @var array $filesToIgnore
+     */
+    public $filesToIgnore = array('.gitignore', '.gitmodules');
+
+    /**
+     * @var array $servers
+     */
+    public $servers = array();
+
+    /**
+     * @var array $submodules
+     */
+    public $submodules = array();
+
+    /**
+     * @var string $shortops
+     */
+    protected $shortopts  = 'ls:';
+
+    /**
+     * @var array $longopts
+     */
+    protected $longopts  = array('list', 'rollback::', 'server:');
+
+    /**
+     * @var bool|resource $connection
+     */
+    protected $connection = false;
+
+    /**
+     * @var string $server
+     */
+    protected $server = '';
+
+    /**
+     * @var string $repo
+     */
+    protected $repo;
+
+    /**
+     * @var string $mainRepo
+     */
+    protected $mainRepo;
+
+    /**
+     * @var bool|string $isSubmodule
+     */
+    protected $isSubmodule = false;
+
+    /**
+     * @var string $dotRevision
+     */
+    protected $dotRevision = '.revision';
+
+    /**
+     * @var bool $listFiles
+     */
+    protected $listFiles = false;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->parseOptions();
+
+        if (file_exists("$this->repo/.git")) {
+            $this->checkSubmodules($this->repo);
+            $this->deploy($this->revision);
+        } else {
+            throw new Exception("Oh Snap: '{$this->repo}' is not Git repository.\n");
+        }
+    }
+
+    /**
+     * Parse CLI options
+     */
+    protected function parseOptions()
+    {
+        $options = getopt($this->shortopts, $this->longopts);
+
+        if (isset($options['l']) or isset($options['list'])) {
+            $this->listFiles = true;
+        }
+
+        if (isset($options['s']) or isset($options['server'])) {
+            $this->server = isset($options['s']) ? $options['s'] : $options['server'];
+        }
+
+        if (isset($options['rollback'])) {
+            $this->revision = ($options['rollback'] == '') ? 'HEAD^' : $options['rollback'];
+        } else {
+            $this->revision = 'HEAD';
+        }
+
+        $this->repo = isset($opts['repo']) ? rtrim($opts['repo'], '/') : getcwd();
+        $this->mainRepo = $this->repo;
+    }
+
+    /**
+     * Check for submodules
+     * 
+     * @param string $repo
+     */
+    protected function checkSubmodules($repo)
+    {
+        $command = "git --git-dir=\"$repo/.git\" --work-tree=\"$repo\" submodule status";
+        $output = array();
+
+        exec(escapeshellcmd($command), $output);
+
+        if (count($output) > 0) {
+            foreach ($output as $line) {
+                $line = explode(' ', trim($line));
+                $this->submodules[] = array('revision' => $line[0], 'name' => $line[1], 'path' => $repo.'/'.$line[1]);
+                $this->filesToIgnore[] = $line[1];
+                $this->checkSubSubmodules($repo, $line[1]);
+            }
+        }
+    }
+
+    /**
+     * Check for sub-submodules
+     * 
+     * @param string $repo
+     * @param string $name
+     */
+    protected function checkSubSubmodules($repo, $name)
+    {
+        $command = "git --git-dir=\"$repo/.git\" --work-tree=\"$repo\" submodule foreach git submodule status";
+        $output = array();
+
+        exec(escapeshellcmd($command), $output);
+
+        if (count($output) > 0) {
+            foreach ($output as $line) {
+                $line = explode(' ', trim($line));
+
+                if (trim($line[0]) == 'Entering') continue;
+                
+                $this->submodules[] = array('revision' => $line[0], 'name' => $name.'/'.$line[1], 'path' => $repo.'/'.$name.'/'.$line[1]);
+                $this->filesToIgnore[] = $name.'/'.$line[1];
+            }
+        }
+    }
+
+    /**
+     * Parse Credentials
+     * 
+     * @param string $deploy
+     */
+    protected function parseCredentials($deploy)
+    {
+        if (! file_exists($deploy)) {
+            throw new Exception("Oh Snap: '$deploy' does not exist.\n");
+        } else {
+            $servers = parse_ini_file($deploy, true);
+
+            if (! $servers) {
+                 throw new Exception("Oh Snap: '$deploy' is not a valid .ini file.\n");
+            } else {
+                $this->filesToIgnore[] = $deploy;
+                return $servers;
+            }
+        }
+    }
+
+    /**
+     * Add Servers
+     */
+    protected function prepareServers()
+    {
+        $defaults = array(
+            'host' => '',
+            'user' => '',
+            'pass' => '',
+            'port' => 21,
+            'path' => '/',
+            'passive' => true,
+            'clean_directories' => array()
+        );
+        
+        $servers = $this->parseCredentials('deploy.ini');
+
+        foreach ($servers as $name => $options) {
+            if ($name == 'quickmode') {
+                foreach ($options as $env => $creds) {
+                    $options = parse_url($creds);
+                    $options = array_merge($defaults, $options);
+                    $this->servers[$env] = $options;
+                }
+                break;
+            }
+
+            $options = array_merge($defaults, $options);
+
+            $this->servers[$name] = $options;
+        }
+    }
+
+    /**
+     * Compare revisions and return files to upload
+     *
+     * @param string $localRevision
+     * @return array
+     * @throws Exception if unknown git diff status
+     */
+    protected function compare($localRevision)
+    {
+        $remoteRevision = null;
+        $tmpFile = tmpfile();
+        $filesToUpload = array();
+        $filesToDelete = array();
+        $output = array();
+
+        if ($this->isSubmodule) {
+            $this->dotRevision = $this->isSubmodule.'/.revision';
+        }
+
+        if (ftp_fget($this->connection, $tmpFile, $this->dotRevision, FTP_ASCII)) {
+            fseek($tmpFile, 0);
+            $remoteRevision = trim(fread($tmpFile, 1024));
+            fclose($tmpFile);
+        } else {
+            $this->output('Fresh deployment - grab a ☕');
+        }
+
+		$gitCommand = 'git --git-dir="'.$this->repo.'/.git" --work-tree="'.$this->repo.'"';
+
+		if (empty($remoteRevision)) {
+			$command = $gitCommand.' ls-files';
+		} else if ($localRevision == 'HEAD') {
+            $command = $gitCommand.' diff --name-status '.$remoteRevision.'...'.$localRevision;
+        } else {
+            $command = $gitCommand.' diff --name-status '.$remoteRevision.'... '.$localRevision;
+        }
+
+        exec(escapeshellcmd($command), $output);
+
+		if (! empty($remoteRevision)) {
+	        foreach ($output as $line) {
+	            if ($line[0] == 'A' or $line[0] == 'C' or $line[0] == 'M') {
+	                // Added (A), Modified (C), Unmerged (M)
+	                $filesToUpload[] = trim(substr($line, 1));
+	            } elseif ($line[0] == 'D') {
+	                // Deleted (D)
+	                $filesToDelete[] = trim(substr($line, 1));
+	            } else {
+	                throw new Exception("Oh Snap: Unknown git-diff status: {$line[0]}");
+	            }
+	        }
+        } else {
+		    $filesToUpload = $output;
+		}
+
+        $filesToUpload = array_diff($filesToUpload, $this->filesToIgnore);
+
+        return array(
+            'upload' => $filesToUpload,
+            'delete' => $filesToDelete
+        );
+    }
+
+    /**
+     * Deploy files
+     * 
+     * @param string $revision
+     */
+    public function deploy($revision = 'HEAD') 
+    {
+        $this->prepareServers();
+
+        foreach ($this->servers as $name => $server) {
+            // Skip servers not specified, if specified.
+            if ($this->server != '' && $this->server != $name) continue;
+
+            $this->connect($server);
+            $files = $this->compare($revision);
+
+            if ($this->listFiles === true) {
+                $this->output("SERVER ➝ ".$name);
+                $this->listFiles($files);
+            } else {
+                $this->output("SERVER ➝ ".$name);
+                $this->push($files);
+            }
+
+            if (count($this->submodules) > 0) {
+                foreach ($this->submodules as $submodule) {
+                    $this->repo = $submodule['path'];
+                    $this->isSubmodule = $submodule['name'];
+                    
+                    $this->output("SUBMODULE: ".$this->isSubmodule);
+                    
+                    $files = $this->compare($revision);
+
+                    if ($this->listFiles === true) {
+                        $this->listFiles($files);
+                    } else {
+                        $this->push($files);
+                    } 
+                }
+            }
+
+            ftp_close($this->connection);
+        }         
+    }
+
+    /**
+     * Check what files will be uploaded/deleted
+     * 
+     * @param array $files
+     */
+    protected function listFiles($files)
+    {
+        if (count($files['upload']) > 0 && count($files['delete']) > 0) {
+            $this->output("No files to upload.");
+        }
+
+        if (count($files['upload']) > 0) {
+            $this->output("Files to upload:");
+
+            foreach ($files['upload'] as $file_to_upload) {
+                $this->output(" ↑ ".$file_to_upload);
+            }
+        }
+
+        if (count($files['delete']) > 0) {
+            $this->output("Files to delete:");
+
+            foreach ($files['delete'] as $file_to_delete) {
+                $this->output(" ✗ ".$file_to_delete);
+            }
+        }
+    }
+
+    /**
+     * Connect to the Server
+     * 
+     * @param string $server
+     * @throws Exception if it can't connect to FTP server
+     * @throws Exception if it can't login to FTP server
+     * @throws Exception if it can't change FTP directory
+     */
+    protected function connect($server)
+    {
+        // Make sure the $path ends with a slash.
+        $server['path'] = rtrim($server['path'], '/').'/';
+
+        $pathsThatExist = array();
+
+        $connection = ftp_connect($server['host'], $server['port']);
+
+        if ($connection) {
+            if (! ftp_login($connection, $server['user'], $server['pass'])) {
+                throw new Exception("Oh Snap: Could not login to {$server['host']} (Tried to login as {$server['user']}).\n");
+            }
+
+            ftp_pasv($connection, $server['passive']);
+
+            if (ftp_chdir($connection, $server['path'])) {
+                $this->connection = $connection;
+                $this->output("\r\n+ ---------- ☻ ---------- +");
+            } else {
+                throw new Exception("Oh Snap: Could not change the FTP directory to {$server['path']}.\n");
+            }
+        } else {
+            throw new Exception("Oh Snap: Could not connect to {$server['host']}\n");
+        }
+    }
+
+    /**
+     * Push Files one by one.
+     */
+    protected function push($files)
+    {
+        // If revision is not HEAD, the current one, it means this is a rollback.
+        // So, we have to revert the files the the state they were in that revision.
+        if ($this->revision != 'HEAD') {
+            $this->output("⟲ Rolling back");
+            $command = 'git --git-dir="'.$this->repo.'/.git" --work-tree="'.$this->repo.'" checkout '.$this->revision;
+            exec(escapeshellcmd($command));
+        }
+
+        $filesToUpload = $files['upload'];
+        $filesToDelete = $files['delete'];
+        unset($files);
+
+        foreach ($filesToUpload as $file) {
+            if ($this->isSubmodule) $file = $this->isSubmodule.'/'.$file;
+
+            // Make sure the folder exists in the FTP server.
+            $dir = explode("/", dirname($file));
+            $path = "";
+            $ret = true;
+
+            for($i = 0, $count = count($dir); $i < $count; $i++) {
+                $path .= $dir[$i].'/';
+
+                if (! isset($pathsThatExist[$path])) {
+                    $origin = ftp_pwd($this->connection);
+                    
+                    if (! ftp_chdir($this->connection, $path)) {
+                        if (! ftp_mkdir($this->connection, $path)) {
+                            $ret = false;
+                            
+                            $this->output("Failed to create '$path'.");
+                            $this->output("Directory could not be created. Please check if a file with the same name exists in the server and delete it.");
+                            
+                            return;
+                        } else {
+                            $this->output("Created directory '$path'.");
+                            $pathsThatExist[$path] = true;
+                        }
+                    } else {
+                        $pathsThatExist[$path] = true;
+                    }
+                
+                    ftp_chdir($this->connection, $origin);
+                }
+            }
+
+            $uploaded = false;
+            $attempts = 1;
+            
+            while (! $uploaded) {
+                if ($attempts == 10) {
+                    throw new Exception("Oh Snap: Tried to upload $file 10 times and failed. Something is wrong ...\n");
+                }
+
+                $uploaded = ftp_put($this->connection, $file, $file, FTP_BINARY);
+
+                if (! $uploaded) {
+                    $attempts = $attempts + 1;
+                    $this->output("Failed to upload {$file}. Retrying (attempt $attempts/10)... ");
+                }
+            }
+            
+            $this->output("✓ \033[01;37m{$file}\033[0m \033[0;32muploaded\033[0m");
+        }
+
+        foreach ($filesToDelete as $file) {
+            ftp_delete($this->connection, $file);
+            $this->output("✓ \033[01;37m{$file}\033[0m \033[01;31mremoved\033[0m");
+        }
+
+        if (! empty($server['clean_directories'])) {
+            foreach ($server['clean_directories'] as $dir) {
+                if (! $tmpFiles = ftp_nlist($this->connection, $dir)) {
+                    $this->output("{$dir} already empty");
+                    continue;
+                }
+
+                foreach ($tmpFiles as $file) {
+                    ftp_delete($this->connection, $file);
+                }
+
+                $this->output("✓ \033[01;37m{$dir}\033[0m \033[01;31memptied\033[0m");
+            }
+        }
+
+        if (count($filesToUpload) > 0 or count($filesToDelete) > 0) {
+            $temp = tempnam(sys_get_temp_dir(), 'gitRevision');
+            $command = "git --git-dir='$this->repo/.git' --work-tree='$this->repo\' rev-parse HEAD";
+            exec(escapeshellcmd($command), $locRev);
+
+            file_put_contents($temp, $locRev);
+            
+            if (ftp_put($this->connection, $this->dotRevision, $temp, FTP_BINARY)) {         
+                unlink($temp);
+                $this->output("+ ---------- ✓ ---------- +\r\n");
+            } else {
+                throw new Exception("Oh Snap: Could not update the revision file on server.");   
+            }                
+        } else {
+            $this->output("No files to upload.");
+        }
+
+        // If revision is not HEAD, the current one, it means this is a rollback.
+        // So, we have to revert the master because we reverted to an earlier
+        // revision before the deploy start.
+        if ($this->revision != 'HEAD') {
+            $command = 'git --git-dir="'.$this->repo.'/.git" --work-tree="'.$this->repo.'" checkout master';
+            exec(escapeshellcmd($command));
+        }
+    }
+
+    /**
+     * Helper method to display messages on the screen.
+     * 
+     * @param string $message
+     */
+    public function output($message) {
+        echo $message."\r\n";
+    }
+
+}

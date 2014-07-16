@@ -1,0 +1,2 @@
+<h2>Latest tweets</h2><ul id="twitter"><li><span class="status">Music Studio gaat open!! <a href="http://twitter.com/search?q=%23sneek">#sneek</a> <a href="http://twitter.com/search?q=%23muziek">#muziek</a></span><span class="meta"> <a href="http://twitter.com/deMusicStudio/status/462941929710559234">03:08 PM May 04th</a></span></li><li><span class="status"><a href="https://t.co/RXIGu8AthV">https://t.co/RXIGu8AthV</a>
+Prachtig! :)</span><span class="meta"> <a href="http://twitter.com/deMusicStudio/status/457143175178891264">03:06 PM Apr 18th</a></span></li></ul>

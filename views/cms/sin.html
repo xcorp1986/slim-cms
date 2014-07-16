@@ -1,0 +1,133 @@
+{% extends "cms/base.html" %}
+{% block content %}
+<div class="item">
+
+	<form enctype="multipart/form-data" action="{{ baseURL }}/cms/save" method="post" name="main">
+		<div class="fields">
+			<input type="text" name="id" class="id hidden" value="{{ cnt.0.txt.id }}">
+			<input type="text" name="tb" class="tb hidden" value="{{ tb }}{{ cnt.0.tb }}">
+
+			{% if ( cnt.0.tb == 'articles' ) or tb == ( 'articles' ) %}
+			<h1>Artikel</h1>
+			<hr>
+			{% endif %}
+
+
+
+
+			{% if ( cnt.0.tb == 'articles' ) or tb == ( 'articles' ) or ( cnt.0.tb == 'site_csp' ) or tb == ( 'site_csp' )  %}
+			<input type="text" name="tit" class="tit" value="{{ cnt.0.txt.tit }}" placeholder="Title">
+			{% endif %}
+			<input type="text" name="utt" class="utt hidden" value="{{ cnt.0.txt.utt }}" placeholder="URL title">
+			<input type="text" name="typ" class="typ hidden" value="{{ typ }}{{ cnt.0.txt.typ }}" placeholder="cnt">
+			{% if ( cnt.0.tb == 'articles' ) or tb == ( 'articles' ) or ( cnt.0.tb == 'site_csp' ) or tb == ( 'site_csp' ) %}
+			{% if ( cnt.0.tb != 'site_csp' ) and tb != ( 'site_csp' ) %}
+			<!-- textarea toolbar -->
+			<div id="toolbar" class="toolbar" style="display: none;">
+				<ul class="dropdown">
+					<li><span class="clickable"><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="p"><span>Paragraaf</span> <i class="fa fa-caret-down"></i></a></span>
+						<ul class="" style="border-top:none">
+							<li style="border-top:none"><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="p">Paragraaf</a></li>
+							<li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h1">Kop 1</a></li>
+							<li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h2">Kop 2</a></li>
+							<li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h3">Kop 3</a></li>
+						</ul>
+					</li>
+				</ul>
+
+<!-- 				<a data-wysihtml5-command="bold" title="CTRL+B"><i class="fa fa-bold"></i></a>
+				<a data-wysihtml5-command="italic" title="CTRL+I"><i class="fa fa-italic"></i></a>
+			-->			<a data-wysihtml5-command="createLink" {% if ( cnt.0.tb == 'shop_prd' ) %}class="last"{% endif %}><i class="fa fa-link"></i></a>
+			<div data-wysihtml5-dialog="createLink" style="display: none;">
+				<label>
+					Link:
+					<input data-wysihtml5-dialog-field="href" value="http://">
+				</label>
+				<a data-wysihtml5-dialog-action="save">OK</a>&nbsp;<a data-wysihtml5-dialog-action="cancel">Cancel</a>
+			</div>
+			<a data-wysihtml5-command="quote"><i class="fa fa-quote-left"></i></a>
+			<a data-wysihtml5-command="insertUnorderedList"><i class="fa fa-list-ul"></i></a>
+			<a data-wysihtml5-command="insertOrderedList" class="last"><i class="fa fa-list-ol"></i></a>
+		</div>
+		{% endif %}
+		<!-- textarea -->
+		<textarea id="textarea" class="textarea" onkeyup="textAreaAdjust(this)" placeholder="Enter text ..." name="txt" style="height:300px !important">{{ cnt.0.txt.txt }}</textarea>
+		{% endif %}
+
+<!-- sticky bottom -->
+<div id="sticky">
+	<div class="g3">
+		<input type="submit" name="submit" value="Opslaan" class="subm">
+		{% if cnt.0.txt.id !="" %}
+		<a href="{{ baseURL }}/cms/{{ cnt.0.tb }}{{ tb }}/{{ cnt.0.txt.id }}/delete" class="del">of verwijder</a>
+		{% endif %}
+	</div>
+	<div class="g3 last">
+
+
+		{% if
+		( cnt.0.tb != 'site_fct' ) and ( tb != 'site_fct' ) and
+		( cnt.0.tb != 'site_clt' ) and ( tb != 'site_clt' ) and
+		( cnt.0.tb != 'site_csp' ) and ( tb != 'site_csp' )
+		%}
+		{% if cnt.0.txt.id !="" %}
+		<div class="pub">
+			<a href="{{ baseURL }}/cms/{{ path.3 }}/{{ cnt.0.txt.id }}/{{ cnt.0.txt.utt }}/concept" class="con {% if cnt.0.txt.pub == '0' %} sel {% endif %}">Concept</a>
+			<a href="{{ baseURL }}/cms/{{ path.3 }}/{{ cnt.0.txt.id }}/{{ cnt.0.txt.utt }}/public" class="pub {% if cnt.0.txt.pub == '1' %} sel {% endif %} last">Public</a>
+		</div>
+		{% endif %}
+		{% endif %}
+		{% if ( cnt.0.tb == 'site_fct' ) or ( tb =='site_fct' )  %}
+		<div class="hp" style="display:block; float:right">
+			<a href="{{ baseURL }}/public/lib/fct.php?id={{ cnt.0.txt.id }}" class="btn" target="_blank" style="float:right;margin-top:9px;padding:8px 18px 7px 18px">Toon PDF</a>
+		</div>
+		{% endif %}
+		{% if ( cnt.0.tb == 'site_csp' ) or tb == ( 'site_csp' )  %}
+		<div class="hp" style="display:block; float:right">
+			<a href="{{ baseURL }}/public/lib/csp.php?id={{ cnt.0.txt.id }}" class="btn" target="_blank" style="float:right;margin-top:9px;padding:8px 18px 7px 18px">Toon PDF</a>
+		</div>
+		{% endif %}
+		<input type="text" name="dat" value="{{ cnt.0.txt.dat|date("m-d-Y") }}" placeholder="Date">
+		{% if ( cnt.0.tb != 'site_fct' ) and ( tb !='site_fct' ) %}
+		{% endif %}
+
+		{% if ( cnt.0.tb == 'articles' ) %}
+		<a href="{{ baseURL }}/artikel/{{ cnt.0.txt.id }}/{{ cnt.0.txt.utt }}" style="float:right" target="_blank">Toon artikel</a>
+		{% endif %}
+	</div>
+</div>
+</form>
+<pre>
+	<div id="info">Waiting for update</div>
+</pre>
+<form action="process-sortable.php" method="post" name="sortables">
+	<input type="hidden" name="test-log" id="test-log" />
+</form>
+{% if ( cnt.0.tb == 'articles' ) %}
+<div class="box">
+	<h2>Afbeeldingen en bestanden</h2>
+	<form id="upload" method="post" action="{{ baseURL }}/cms/upload" enctype="multipart/form-data">
+		<input type="text" name="pid" class="pid hidden" value="{{ cnt.0.txt.id }}">
+		<table>
+			<thead>
+				<tr>
+					<td class="g1">Volgorde</td>
+					<td class="g2">Afbeelding</td>
+					<td class="g2">Bestandsnaam</td>
+					<td class="g1 last">&nbsp;</td>
+				</tr>
+			</thead>
+			<tbody  class="images">
+				<!-- The file uploads will be shown here -->
+			</tbody>
+		</table>
+		<div id="drop" class="drop">
+			<a>+ Selecteer bestand(en)</a>
+			<input type="file" name="upl" multiple />
+		</div>
+	</form>
+</div>
+{% endif %}
+</div>
+<div class="push">&nbsp;</div>
+{% endblock %}

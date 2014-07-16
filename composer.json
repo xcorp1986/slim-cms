@@ -1,0 +1,17 @@
+{
+    "name": "Bowling",    
+    "require": {
+        "php": ">=5.3.0",
+        "slim/slim": "2.*",
+        "slim/extras": "2.*",
+        "twig/twig": "1.*",
+        "j4mie/paris": "*",
+        "j4mie/idiorm": "*",
+        "dhorrigan/capsule": "*"
+    },
+    "autoload": {
+        "classmap": [
+            "models"
+        ]
+    }
+}

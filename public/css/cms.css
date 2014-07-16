@@ -1,0 +1,1027 @@
+/*
+ * HTML5 Boilerplate
+ *
+ * What follows is the result of much research on cross-browser styling.
+ * Credit left inline and big thanks to Nicolas Gallagher, Jonathan Neal,
+ * Kroc Camen, and the H5BP dev community and team.
+ */
+/* ==========================================================================
+   Base styles: opinionated defaults
+   ========================================================================== */
+   html,
+   button,
+   input,
+   select,
+   textarea {
+   	color: #222;
+   }
+   body {
+   	font-size: 1em;
+   	line-height: 1.4;
+   }
+/*
+ * Remove text-shadow in selection highlight: h5bp.com/i
+ * These selection rule sets have to be separate.
+ * Customize the background color to match your design.
+ */
+ ::-moz-selection {
+ 	background: #ccc;
+ 	text-shadow: none;
+ }
+ ::selection {
+ 	background: #ccc;
+ 	text-shadow: none;
+ }
+/*
+ * A better looking default horizontal rule
+ */
+ hr {
+ 	display: block;
+ 	height: 1px;
+ 	border: 0;
+ 	border-top: 1px solid #ccc;
+ 	border-bottom: none !important;
+ 	margin: 1em 0;
+ 	padding: 0;
+ }
+/*
+ * Remove the gap between images and the bottom of their containers: h5bp.com/i/440
+ */
+ img {
+ 	vertical-align: middle;
+ }
+/*
+ * Remove default fieldset styles.
+ */
+ fieldset {
+ 	border: 0;
+ 	margin: 0;
+ 	padding: 0;
+ }
+/*
+ * Allow only vertical resizing of textareas.
+ */
+ textarea {
+ 	/*     resize: vertical; */
+ }
+/* ==========================================================================
+   Chrome Frame prompt
+   ========================================================================== */
+   .chromeframe {
+   	margin: 0.2em 0;
+   	background: #ccc;
+   	color: #000;
+   	padding: 0.2em 0;
+   }
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+/**
+* General
+*/
+@font-face {
+	font-family: "Atlas Grotesk";
+	src: url("../fonts/AtlasGrotesk-Regular-Web.eot");
+	src: local("?"),
+	url("../fonts/AtlasGrotesk-Regular-Web.woff") format("woff"),
+	url("../fonts/AtlasGrotesk-Regular-Web.eot") format("opentype"),
+	url("../fonts/AtlasGrotesk-Regular-Web.svg") format("svg");
+}
+@font-face {
+	font-family: "Atlas Typewriter";
+	src: url("../fonts/AtlasTypewriter-Regular-Web.eot");
+	src: local("?"),
+	url("../fonts/AtlasTypewriter-Regular-Web.woff") format("woff"),
+	url("../fonts/AtlasTypewriter-Regular-Web.eot") format("opentype"),
+	url("../fonts/AtlasTypewriter-Regular-Web.svg") format("svg");
+}
+@font-face {
+	font-family: "FontAwesome";
+	src: url("../fonts/fontawesome-webfont.eot");
+	src: local("?"),
+	url("../fonts/fontawesome-webfont.woff") format("woff"),
+	url("../fonts/fontawesome-webfont.eot") format("opentype"),
+	url("../fonts/fontawesome-webfont.svg") format("svg");
+}
+body,html {
+	background-color: #f9f9f9;
+	margin: 0;
+	padding: 0;
+	font-size: 15px;
+	color: #333;
+}
+body, input, textarea, #sticky {
+	font-family:"Atlas Grotesk", Verdana, sans-serif; font-size-adjust:0.5; font-weight:normal; font-style:normal;
+	text-rendering: optimizeLegibility;
+	line-height: 1.7em;
+}
+h1,h2,h3 {
+	font-size: 1.2em;
+	font-weight: normal;
+}
+h1 {
+	font-size: 24px;
+}
+h1 a {
+	color: #999;
+	border-bottom: none;
+}
+h2 {
+	font-size: 16px;
+}
+a, .items li a strong {
+	text-decoration: none;
+	color: #333;
+	border-bottom: 1px solid #ccc;
+	padding-bottom: 1px;
+}
+a:hover {
+	background-color: #eee;
+}
+ul {
+	list-style: none;
+}
+div {
+	margin-bottom: 10px;
+}
+.not-clickable {
+	color: #ccc;
+	cursor: default;
+}
+.not-clickable:hover {
+	background-color: #fff;
+}
+i.fa {
+	color: #555;
+}
+.right {
+	float: right;
+}
+strong {
+	font-weight: normal;
+}
+
+
+::-webkit-input-placeholder {
+   color: #aaa;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+   color: #aaa;
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+   color: #aaa;
+}
+
+:-ms-input-placeholder {
+   color: #aaa;
+}
+
+
+/**
+* List view
+*/
+.list-table {
+	margin: 10px;
+	width: 98%
+}
+.list-table h1 {
+	float: left;
+}
+.list-table  td {
+	padding: 10px;
+	height: 30px;
+	font-size: 14px;
+}
+table {
+	width: 100%;
+}
+table i.fa {
+	color: #999;
+}
+tr {
+	border-bottom: 1px solid #ddd;
+}
+td,th {
+	padding: 20px 20px 20px 0;
+}
+
+ p {
+/*	padding-top: 20px;
+*/	width: 100%;
+	font-size: 16px;
+	color: #555;
+}
+
+/**
+ * Pager
+ */
+
+ .pager ul {
+ 	padding: 0;
+ 	border: 1px solid #ddd;
+ 	border-radius: 2px;
+ 	width: auto;
+ 	display: inline-block;
+ }
+ .pager li {
+ 	display: inline-block;
+ }
+ .pager a.sel {
+ 	background-color: #ddd;
+ }
+ .pager a {
+ 	width: 20px;
+ 	padding:10px;
+ 	display: inline-block;
+ 	text-align: center;
+ 	border-right: 1px solid #ddd;
+ }
+
+ .pager li:last-child a {
+ 	border-right: none;
+ }
+/**
+* Forms
+*/
+input[type=text], input[type=password], textarea, select {
+	font-size: 16px;
+	line-height: 1.4em;
+	display: block;
+	width: auto;
+	margin:  0 0 10px 0;
+	border: none;
+	border: 1px solid #ccc;
+	border-radius: 2px;
+	background-color: #fff;
+	outline: none;
+	color: #555;
+	padding: 6px;
+}
+select {
+	font-size: 13px;
+	height: 30px;
+	margin-top: 6px;
+	-webkit-appearance: menulist-button;
+}
+input[type=file] {
+	position: absolute;
+	width: auto !important;
+	border: 1px solid #ccc;
+	line-height: 10px;
+}
+input[type=submit], .btn, button {
+	border: none;
+	margin-right: 1em;
+	padding: 9px 18px;
+	text-decoration: none;
+	border-radius: 2px;
+	background: #ccc;
+	color: #333;
+	border-bottom: 1px solid #aaa !important;
+	display: inline-block;
+	cursor: pointer;
+}
+.btn.add {
+	font-size: 18px
+}
+.btn.light {
+	background-color: #fafafa;
+	border:1px solid #ccc !important;
+	color: #999;
+}
+a.btn {
+	display: inline-block;
+}
+.btn.del {
+	border-radius: 30px;
+	height: 23px;
+	width: 17px;
+	color: #fafafa;
+	padding: 0;
+	margin:0;
+	margin-left: 12px;
+	border-bottom: 0px !important;
+	padding-left: 6px;
+	padding-top: 0px;
+	font-size: 18px;
+	display: block;
+	float: right;
+}
+.btn.del:hover {
+	color: #fff;
+	background-color: #FF696C;
+}
+.btn.sts {
+	cursor: default;
+	background-color: #fafafa;
+	border: 1px solid #999 !important;
+	color: #999;
+}
+input[type=submit]:hover, .btn:hover {
+	background: #ccc;
+	color: #333;
+	cursor: pointer;
+}
+.btn.sts:hover {
+	background-color: #fafafa;
+	cursor: default;
+	color: #999;
+}
+fieldset {
+	width: 300px;
+	margin: auto;
+	margin-bottom: 2em;
+	display: block;
+}
+/**
+ * Header
+ */
+ header {
+ 	background-color: #fff;
+ 	margin: 0;
+ 	position: fixed;
+ 	width: 100%;
+ 	clear: both;
+ 	box-shadow: 0px 5px 0px rgba(0,0,0,0.05);
+ }
+ header ul {
+ 	margin: 0;
+ 	padding: 0;
+ }
+ header li {
+ 	display: inline-block;
+ 	padding: 0;
+ 	margin: 0;
+ 	float: left;
+ }
+ header a, header span {
+ 	border-bottom: none;
+ 	padding: 15px 10px;
+ 	font-size: 14px;
+ 	margin: 0;
+ 	border-right: 1px solid #e5e5e5;
+ 	display: inline-block;
+ 	cursor: pointer;
+ }
+ header a:hover, header span:hover, header a.sel {
+ 	background-color: #fafafa;
+ }
+ header ul ul {
+ 	display: none;
+ }
+ header ul.visible {
+ 	display: block;
+ }
+ header .dropdown span {
+ 	border-left: 1px solid #e5e5e5;
+ 	text-align: center;
+ }
+ header ul ul {
+ 	/* 	width: 200px; */
+ 	position: absolute;
+ 	right: 0;
+ 	top: 55px;
+ 	background-color: #fff;
+ 	border-bottom: 2px solid #e5e5e5;
+ }
+ header ul ul li {
+ 	/* 	width: 200px; */
+ 	clear: both;
+ 	float: none;
+ }
+ header ul ul a {
+ 	width: 160px;
+ 	border-top: 1px solid #e5e5e5;
+ }
+ hr {
+ 	clear: both;
+ 	border-top: 1px solid #ccc;
+ 	margin-top: 10px;
+ 	margin-bottom: 30px;
+ }
+ header div, header nav {
+ 	float:left;
+ 	margin:0 0% 0 0%;
+ 	overflow:hidden;
+ }
+ header .last {
+ 	float: right;
+ 	border-right: none;
+ }
+ header .last a {
+ 	border-left: 1px solid #e5e5e5;
+ 	border-right: none;
+ }
+ header .last li {
+ 	float: right;
+ }
+/**
+ * Grid
+ */
+ .container {
+ 	margin:0 auto; overflow:hidden; width:100%; padding-top: 75px;
+ }
+ .g1,.g1-2,.g2,.g3,.g4 {
+ 	float:left; margin:0 2% 2% 0; overflow:hidden;
+ 	/* 	background: yellow; */
+ }
+ table .g1,table .g1-2,table .g2,table .g3,table .g4 {
+ 	margin-left: 0;
+ 	margin-right: 0;
+ 	float: none;
+ }
+ header div:last-child, .last { margin-right:0; }
+ .g1 { width:15%; }
+ .g1-2 { width:20%; }
+ .g2 { width:32%; }
+ .g3 { width:49%; }
+ .g4 { width:66%; }
+ .g6 { margin-bottom:0; width:100%; }
+ /* items (cnt list) */
+ .items-top, .items-top .g2 {
+ 	padding: 10px 0;
+ 	display: block;
+ }
+ .items-top .btn {
+ 	margin: 0 10px;
+ }
+ .items {
+ 	padding: 0;
+ 	margin: 0;
+ 	line-height: 30px;
+ 	clear: both;
+ }
+ .items ul {
+ 	margin-top: 0 !important;
+ 	margin-bottom: 40px !important;
+ 	padding: 0;
+ }
+ .items li {
+ }
+ .items li a {
+ 	display: block;
+ 	margin: 0 10px;
+ 	padding: 10px;
+ 	border-bottom: 1px solid #ccc;
+ }
+ .items li .dat {
+ 	color: #aaa;
+ 	font-size: 11px;
+ 	margin-right: 10px;
+ }
+ .items h1 {
+ 	text-transform: uppercase;
+ 	font-size: 14px;
+ 	color: #999;
+ 	margin: 10px 10px 0 10px;
+ 	padding-bottom: 0;
+ 	padding: 10px;
+ 	border: 1px solid #ccc;
+ 	border-radius: 2px;
+ 	text-transform: none;
+ }
+ .items h1:hover {
+ 	cursor: pointer;
+ 	background-color: #eee;
+ }
+ .items h1.closed:before
+ {
+ 	content: "\25b2";
+ }
+/*
+.items h1.closed:hover:before
+{
+content: "\25bc";
+}
+*/
+.items h1.open:before
+{
+	content: "\25bc";
+}
+/*
+.items h1.open:hover:before
+{
+content: "\25b2";
+}
+*/
+.items .new {
+	display: inline-block;
+	float: right;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	margin-right: -5px;
+	margin-top: -2px;
+}
+.con {
+	color: #aaa !important;
+}
+span.del {
+	float: right;
+	display: inline-block;
+	margin-left: 10px;
+	padding: 0px 10px;
+}
+span.del:hover {
+	background-color: #ccc;
+	border-radius: 2px;
+}
+/**
+ * Sin
+ */
+ .item {
+ 	margin: 0 10px;
+ }
+ .item form {
+ 	margin: 0;
+ 	padding: 0;
+ }
+ .item textarea, .item input {
+ 	-webkit-box-sizing: border-box;
+ 	-moz-box-sizing: border-box;
+ 	box-sizing: border-box;
+ 	display: block;
+ 	width: 100%;
+ 	padding: 10px;
+ }
+ .item textarea {
+ 	height: 350px;
+ }
+ #info {
+ 	display: none;
+ }
+ h2 {
+ 	color: #999;
+/*	margin: 10px;
+*/}
+
+.fields {
+	display: block;
+}
+.fields h2, .box h2 {
+	margin-left: 1%;
+}
+.var .typ {
+	display: block !important;
+}
+
+
+.thumb {
+	width: 100px;
+	height: 100px;
+	display: inline-block;
+}
+.thumb img {
+	width: 100%;
+	height: auto;
+	float: left;
+}
+
+input[type=file] {
+	width: auto !important;
+	border: 1px solid #ccc;
+	line-height: 10px;
+	float: left;
+	display: inline-block;
+	margin-left: 10px;
+}
+
+#textarea2 {
+	height: 180px;
+}
+
+pre {
+	display: none;
+}
+
+/**
+ * Box
+ */
+ .box {
+/* 	clear: both;
+ 	width: 100%;
+*/ 	border: 1px solid #ccc;
+ 	border-radius: 2px;
+ }
+ .box p {
+ 	padding-top: 20px;
+ 	width: 100%;
+ 	font-size: 16px;
+ 	color: #555;
+ }
+ .box table  {
+ 	margin: 10px;
+ 	width: 98%
+ }
+ .box tr, .box td {
+ 	margin-top: 10px;
+ }
+ tbody tr {
+ 	background-color: #f9f9f9;
+ }
+ thead, thead a {
+ 	background-color: #eee;
+ 	padding-top: 10px !important;
+ }
+ thead, thead a {
+ 	color: #999;
+ }
+ .box  td {
+ 	padding: 5px 10px;
+ 	height: 30px;
+ 	font-size: 14px;
+ }
+ .handle {
+ 	font-size: 30px;
+ 	color: #ccc;
+ 	cursor: pointer;;
+ }
+ td input {
+ 	margin-top: 10px !important;
+ 	font-size: 14px !important;
+ 	margin-left: -5px !important;
+ }
+ h2 {
+ 	color: #999;
+ }
+/**
+ * File upload
+ */
+ .drop a {
+ 	border: 1px solid #ccc;
+ 	border-radius: 2px;
+ 	color: #333;
+ 	padding: 10px;
+ 	margin: 10px;
+ 	display: inline-block;
+ 	cursor: pointer;
+ }
+ .drop input {
+ 	display: none;
+ }
+ .images img{
+ 	width: auto;
+ 	height: 50px;
+ }
+/**
+ * Sticky
+ */
+ #sticky {
+ 	margin: 0 -10px;
+ 	width: 100%;
+ 	height: 60px;
+ 	bottom: 0;
+ 	background-color: #fafafa;
+ 	border-top: 1px solid #ccc;
+ 	position: fixed;
+/* 	z-index: 1000;
+*/ }
+#sticky input[type=submit] {
+	margin: 10px;
+	width: 80px;
+	height: 40px;
+	float: left;
+}
+input.file {
+	float: left;
+	height: auto;
+	font-size: 10px;
+	letter-spacing: 1px;
+	font-weight: bold;
+	color: #999;
+	text-transform: uppercase;
+}
+#sticky a {
+	margin: 12px 10px ;
+	display: inline-block;
+}
+#sticky a.del {
+	margin-top: 18px;
+}
+#sticky div.hp  span {
+	margin: 15px 10px;
+	display: inline-block;
+	color: #aaa;
+}
+#sticky div.hp {
+	float: right;
+}
+#sticky div.pub {
+	border: 1px solid #aaa;
+	border-radius: 2px;
+	display: inline-block;
+	padding: 0 0;
+	margin-top: 9px;
+	float: right;
+	margin-right: 10px;
+}
+#sticky a.con, #sticky a.pub {
+	padding: 7px 10px;
+	border-right: 1px solid #aaa;
+	border-bottom: none;
+	margin: 0 !important;
+	display: inline;
+	float: left;
+	color: #aaa;
+	background-color: #fafafa;
+}
+#sticky input[type=text] {
+	border: 1px solid #aaa;
+	border-radius: 2px;
+	padding: 7px 10px;
+	font-size: 15px;
+	float: right;
+	width: 120px;
+	height: 41px;
+	background-color: #fafafa;
+	margin-top: 9px;
+	margin-right: 10px;
+	text-align: center;
+}
+#sticky input[type=text]:hover {
+	background-color: #eee;
+}
+#sticky div.pub a.last {
+	border: none !important;
+}
+#sticky div.pub .sel {
+	background-color: #aaa;
+	color: #fff !important;
+}
+
+/**
+ * Toolbar
+ */
+ .toolbar {
+ 	border: 1px solid #ccc;
+ 	border-radius: 2px;
+ 	width: auto;
+ 	padding: 0 0;
+ 	display: inline-block;
+ 	margin-bottom:0 !important;
+ }
+ .toolbar a, .toolbar ul{
+ 	padding: 7px 14px;
+ 	border-right: 1px solid #ccc;
+ 	border-bottom: none;
+ 	margin: 0 !important;
+ 	display: inline;
+ 	float: left;
+ }
+ .toolbar a.last {
+ 	border: none !important;
+ }
+ .b,.i {
+ 	display: block;
+ 	border: 1px solid;
+ }
+ a.wysihtml5-command-active {
+ 	background-color: #eee;
+ }
+ .toolbar ul {
+ 	padding: 0;
+ 	border-right: 0;
+ }
+ .toolbar ul a {
+ 	width: 85px;
+ }
+ .toolbar ul ul {
+ 	display: none;
+ 	position: absolute;
+ 	margin-top: 40px !important;
+ 	left: -1px !!important;
+ 	margin-left: -1px !important;
+ 	border: 1px solid #ddd;
+ 	border-bottom-right-radius: 2px;
+ 	border-bottom-left-radius: 2px;
+ }
+ .toolbar ul ul.visible {
+ 	display: block;
+ }
+ .toolbar ul ul a {
+ 	width: 160px;
+ 	background-color: #f9f9f9;
+ 	border-right: 0px !important;
+ }
+ .toolbar ul ul li {
+ 	clear: both;
+ 	float: none;
+ 	border-top: 1px solid #ddd;
+ }
+ /**
+  * login
+  */
+  .login input {
+  	margin: 10px;
+  }
+  /* notification */
+  .notification {
+  	background-color: #999;
+  	color: #fff;
+  	margin: 10px;
+  }
+  .notification p {
+  	padding: 10px;
+  }
+  .error {
+/* 	font-size: 15px;
+*/ 	color: #fff;
+background-color: #FF696C;
+}
+/**
+ * progressbar
+ */
+ .ui-widget-content {
+ 	border: 1px solid #aa;
+ 	background: #fff;
+ 	color: #181818;
+ 	border-radius: 2px;
+ }
+ .ui-widget-header {
+ 	border: 1px solid #aaa;
+ 	background: #ccc;
+ 	color: #181818;
+ }
+ .ui-progressbar {
+ 	height: 2em;
+ 	text-align: left;
+ 	overflow: hidden;
+ }
+ .ui-progressbar .ui-progressbar-value {
+ 	margin: -1px;
+ 	height: 100%;
+ }
+ .ui-progressbar .ui-progressbar-overlay {
+ 	height: 100%;
+ 	filter: alpha(opacity=25);
+ 	opacity: 0.25;
+ }
+ .ui-progressbar-indeterminate .ui-progressbar-value {
+ 	background-image: none;
+ }
+  /**
+  * Prevent content getting under sticky bar
+  */
+  .push {
+  	height: 100px;
+  }
+/**
+ * Settings
+ */
+
+#settings textarea {
+	height: 200px;
+}
+
+
+/* ==========================================================================
+   Helper classes
+   ========================================================================== */
+/*
+ * Image replacement
+ */
+ .ir {
+ 	background-color: transparent;
+ 	border: 0;
+ 	overflow: hidden;
+ 	/* IE 6/7 fallback */
+ 	*text-indent: -9999px;
+ }
+ .ir:before {
+ 	content: "";
+ 	display: block;
+ 	width: 0;
+ 	height: 150%;
+ }
+/*
+ * Hide from both screenreaders and browsers: h5bp.com/u
+ */
+ .hidden {
+ 	display: none !important;
+ 	visibility: hidden;
+ }
+/*
+ * Hide only visually, but have it available for screenreaders: h5bp.com/v
+ */
+ .visuallyhidden {
+ 	border: 0;
+ 	clip: rect(0 0 0 0);
+ 	height: 1px;
+ 	margin: -1px;
+ 	overflow: hidden;
+ 	padding: 0;
+ 	position: absolute;
+ 	width: 1px;
+ }
+/*
+ * Extends the .visuallyhidden class to allow the element to be focusable
+ * when navigated to via the keyboard: h5bp.com/p
+ */
+ .visuallyhidden.focusable:active,
+ .visuallyhidden.focusable:focus {
+ 	clip: auto;
+ 	height: auto;
+ 	margin: 0;
+ 	overflow: visible;
+ 	position: static;
+ 	width: auto;
+ }
+/*
+ * Hide visually and from screenreaders, but maintain layout
+ */
+ .invisible {
+ 	visibility: hidden;
+ }
+/*
+ * Clearfix: contain floats
+ *
+ * For modern browsers
+ * 1. The space content is one way to avoid an Opera bug when the
+ *    `contenteditable` attribute is included anywhere else in the document.
+ *    Otherwise it causes space to appear at the top and bottom of elements
+ *    that receive the `clearfix` class.
+ * 2. The use of `table` rather than `block` is only necessary if using
+ *    `:before` to contain the top-margins of child elements.
+ */
+ .clearfix:before,
+ .clearfix:after {
+ 	content: " "; /* 1 */
+ 	display: table; /* 2 */
+ }
+ .clearfix:after {
+ 	clear: both;
+ }
+/*
+ * For IE 6/7 only
+ * Include this rule to trigger hasLayout and contain floats.
+ */
+ .clearfix {
+ 	*zoom: 1;
+ }
+/* ==========================================================================
+   EXAMPLE Media Queries for Responsive Design.
+   These examples override the primary ('mobile first') styles.
+   Modify as content requires.
+   ========================================================================== */
+   @media only screen and (min-width: 35em) {
+   	/* Style adjustments for viewports that meet the condition */
+   }
+/* ==========================================================================
+   Print styles.
+   Inlined to avoid required HTTP connection: h5bp.com/r
+   ========================================================================== */
+   @media print {
+   	* {
+   		background: transparent !important;
+   		color: #000 !important; /* Black prints faster: h5bp.com/s */
+   		box-shadow: none !important;
+   		text-shadow: none !important;
+   	}
+   	a,
+   	a:visited {
+   		text-decoration: underline;
+   	}
+   	a[href]:after {
+   		content: " (" attr(href) ")";
+   	}
+   	abbr[title]:after {
+   		content: " (" attr(title) ")";
+   	}
+    /*
+     * Don't show links for images, or javascript/internal links
+     */
+     .ir a:after,
+     a[href^="javascript:"]:after,
+     a[href^="#"]:after {
+     	content: "";
+     }
+     pre,
+     blockquote {
+     	border: 1px solid #999;
+     	page-break-inside: avoid;
+     }
+     thead {
+     	display: table-header-group; /* h5bp.com/t */
+     }
+     tr,
+     img {
+     	page-break-inside: avoid;
+     }
+     img {
+     	max-width: 100% !important;
+     }
+     @page {
+     	margin: 0.5cm;
+     }
+     p,
+     h2,
+     h3 {
+     	orphans: 3;
+     	widows: 3;
+     }
+     h2,
+     h3 {
+     	page-break-after: avoid;
+     }
+ }

@@ -1,0 +1,520 @@
+ @font-face {
+    font-family: 'musicstudio-regular';
+    src: url('../fonts/musicstudio-regular.eot');
+    src: url('../fonts/musicstudio-regular.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/musicstudio-regular.woff') format('woff'),
+    url('../fonts/musicstudio-regular.ttf') format('truetype'),
+    url('../fonts/musicstudio-regular.svg#musicstudio-regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'musicstudio-medium';
+    src: url('../fonts/musicstudio-medium.eot');
+    src: url('../fonts/musicstudio-medium.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/musicstudio-medium.woff') format('woff'),
+    url('../fonts/musicstudio-medium.ttf') format('truetype'),
+    url('../fonts/musicstudio-medium.svg#musicstudio-medium') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+/* General */
+body {
+    font-family: "musicstudio-regular", sans-serif;
+}
+p.lead, .nws h2, footer h3 {
+    font-family: 'musicstudio-medium';
+}
+
+a {
+    text-decoration: none;
+    border-bottom: 2px solid;
+    padding-bottom: 2px;
+}
+canvas {
+    width: 100%;
+    height: 100%;
+}
+
+p.lead {
+    color: #181818;
+    text-align: center;
+    font-size: 30px;
+    line-height: 36px;
+}
+
+.main {
+    font-size: 21px;
+    line-height: 30px;
+}
+
+.btn {
+    background-color: #181818;
+    color: #fff !important;
+    padding: 4px;
+    border-bottom: none;
+}
+
+.btn.contact {
+    margin-top: 20px;
+    display: block;
+    border-radius: 4px;
+    padding:8px 20px 8px 20px;
+    line-height: 60px;
+}
+.btn.contact i {
+    margin-top: 12px;
+    margin-left: 10px;
+    position: absolute;
+
+}
+
+blockquote {
+    background-color: #181818;
+    padding: 20px;
+    overflow: hidden;
+    color: #fff;
+    font-family: "Georgia", "Times New Roman", serif;
+    font-style: normal;
+    border-radius: 4px;
+    border-left:none;
+}
+blockquote h1, blockquote h2, blockquote h3, blockquote h4, blockquote p,blockquote a {
+    color: #fff;
+    font-style: normal;
+    font-family: 'musicstudio-medium';
+    border-bottom: none !important;
+}
+
+blockquote a {
+    color: #fff
+}
+p {
+    font-size: 16px;
+    line-height: 24px;
+}
+
+.tag {
+    font-size: 13px;
+}
+
+h2 a {
+    border-bottom: none;
+}
+
+.main ul {
+    margin-top: 20px;
+}
+
+li {
+    list-style: circle;
+    margin-left: 20px;
+}
+
+
+/* Grid */
+.column, .columns {
+    margin-bottom: 20px;
+}
+
+/* bg */
+#musicstudiositebg {
+    position: fixed;
+    z-index: -1;
+    margin: auto;
+    width: 100%;
+    height: 100%;
+}
+
+canvas {
+    display: block;
+    outline: 0px;
+    margin-bottom: 1.5em;
+    width: 600px;
+    height: 600px;
+}
+
+
+/* logo */
+.logo {
+    text-align: center;
+}
+.logo a {
+    border-bottom: none;
+}
+.logo img {
+    margin: 40px 0 10px 0;
+    width: 200px;
+    height: auto;
+    text-align: center;
+}
+/* nav */
+nav {
+    text-align: center;
+    border-bottom: 1px solid #181818;
+}
+nav li {
+    display: inline-block;
+    margin-right: 20px;
+}
+nav a {
+    text-decoration: none;
+    font-size: 21px;
+    border-bottom: none;
+}
+nav a.sel {
+    border-bottom: 5px solid;
+
+}
+
+/* intro */
+
+.intro {
+    margin: 40px 0;
+    border-bottom: 1px solid #181818;
+}
+/* actueel */
+.item {
+    padding-top: 20px;
+    height: 400px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+.item.nws {
+/*    border: 2px solid #181818;
+*/
+}
+.item.nws h3, .item.nws h3 a {
+    display: inline;
+    float: left;
+    padding-right: 5px;
+    margin: 0;
+    padding-bottom: 0;
+    font-size: 24px;
+    border-bottom: none !important;
+    font-family: 'musicstudio-medium';
+}
+.item.nws img {
+    height: 239px;
+    width: auto;
+}
+
+p.img {
+    padding-top: 5px;
+    margin-bottom: 0;
+    padding-bottom: 9px;
+    border-bottom: none;
+}
+p.img a {
+    border-bottom: none;
+}
+.item.blog {
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #ccc;
+}
+
+.item.blog h2, .item.blog p {
+    font-family: Georgia, serif;
+}
+
+.dat {
+    font-size: 12px;
+}
+.tag {
+     font-family: 'musicstudio-regular';
+   font-size: 12px;
+    border:1px solid #181818;
+    border-radius: 4px;
+    padding:1px 4px;
+    background-color: #181818;
+    color: #fff !important;
+    margin-right: 5px;
+    display: inline-block;
+}
+
+a.tag {
+    border-bottom: 1px solid #fff;
+
+}
+
+a.tag:hover {
+    border:1px solid #fff;
+    background-color: #fff;
+    color: #181818 !important;
+}
+
+.item.twt {
+    background-color: #181818;
+    padding: 20px;
+}
+.item.twt a {
+    color: #fff;
+}
+.item.twt p {
+    bottom: 0;
+    text-align: center;
+}
+.item.twt p.lead {
+    color: #fff;
+    font-size: 20px;
+    line-height: 36px;
+}
+.item.twt .icon a {
+    border-bottom: none;
+}
+.item.twt i.fa {
+    color: #55acee;
+    text-align: center;
+}
+
+.item.twt h1, .item.twt {
+    color: #fff;
+    font-family: 'musicstudio-medium';
+}
+
+.item.twt h1 {
+    font-size: 26px;
+    line-height: 42px;
+}
+
+.item img {
+    width: auto;
+    height: 170px;
+    clear: both;
+}
+#lastPostsLoader {
+    text-align: center;
+    clear: both;
+    padding-bottom: 20px;
+}
+
+#lastPostsLoader a {
+    border-bottom: none;
+}
+
+.one-third img {
+    width: 100%;
+    height: auto;
+}
+
+/* Single view */
+.items {
+    padding-top: 40px;
+}
+.subnav ul {
+    list-style: none;
+    margin: 20px 0;
+    padding: 0;
+}
+.subnav li {
+    margin-bottom: 20px;
+}
+.subnav a {
+    margin: 20px 0 ;
+}
+.side img {
+    margin: 20px 0;
+    width: 100%;
+    height: auto;
+}
+
+/* Contact */
+
+.hidden {
+    display: none !important;
+}
+
+label {
+    font-weight: normal;
+}
+input, textarea, select {
+    width: 100% !important;
+}
+input[type="radio"] {
+    width: 30px !important;
+
+}
+select {
+    height: 30px;
+}
+input[type="submit"], input[type="submit"]:hover {
+    width: 150px !important;
+    background-color: #181818;
+    color: #fff;
+    border:none;
+    text-shadow: none;
+    font-weight: normal;
+
+}
+p input {
+    float: left;
+    display: inline;
+}
+#mv span, #mv2 span, #mvl span {
+    float: left;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+span span {
+    margin-right: 20px;
+}
+
+.set {
+}
+.set input {
+    display: inline;
+    float: left;
+}
+.set .str {
+    width: 50% !important;
+}
+.set .hsn {
+    width: 48% !important;
+    margin-left: 2%;
+}
+input[type=radio] {
+    display: inline-block;
+    width: auto;
+    float: left;
+    width: 40px;
+}
+span.ValidationErrors {
+    width: 100%;
+    clear: both;
+    /*  color: #EB5160; */
+    color: #fff;
+    /*  border: 1px solid #fff; */
+    background-color: #EB5160;
+    padding: 8px 10px;
+    float: right;
+}
+
+.form p {
+    clear: both;
+}
+
+#status {
+    display: none;
+    font-size: 16px;
+    padding: 20px 0;
+}
+p.small, ul.small {
+    font-size: 13px !important;
+}
+.bdr {
+    border: none !important;
+    background-color: transparent !important;
+    cursor: default;
+}
+
+
+.cr2 {
+    padding-top: 40px;
+    margin-top: 40px;
+}
+#loading {
+    width:32px;
+    height:32px;
+    background-image:url(../img/loading.gif);
+    display:block;
+    position:absolute;
+    right:130px;
+    bottom:16px;
+    display:none;
+}
+#errors {
+    border:solid 1px #E58E8E;
+    padding:10px;
+    margin:25px 0px;
+    display:block;
+    width:437px;
+    -webkit-border-radius:8px;
+    -moz-border-radius:8px;
+    border-radius:8px;
+    background:#FFE6E6 url(../img/cancel_48.png) no-repeat 405px center;
+    display:none;
+}
+#errors li {
+    padding:2px;
+    list-style:none;
+}
+#errors li:before {
+    content: ' - ';
+}
+#errors #info {
+    font-weight:bold;
+}
+#errors #info:before {
+    content: '';
+}
+#success {
+    border:solid 1px #83D186;
+    padding:25px 10px;
+    margin:25px 0px;
+    display:block;
+    width:437px;
+    -webkit-border-radius:8px;
+    -moz-border-radius:8px;
+    border-radius:8px;
+    background:#D3EDD3 url(../img/accepted_48.png) no-repeat 405px center;
+    font-weight:bold;
+    display:none;
+}
+#errors.visible, #success.visible {
+    display:block;
+}
+#req-field-desc {
+    font-style:italic;
+}
+/* Remove box shadow firefox, chrome and opera put around required fields. It looks rubbish. */
+input:required, textarea:required {
+    -moz-box-shadow:none;
+    -webkit-box-shadow:none;
+    -o-box-shadow:none;
+    box-shadow:none;
+}
+/* Normalize placeholder styles */
+/* chrome, safari */
+::-webkit-input-placeholder {
+    color:#CCC;
+    font-style:italic;
+}
+/* mozilla */
+input:-moz-placeholder, textarea:-moz-placeholder {
+    color:#CCC;
+    font-style:italic;
+}
+/* ie (faux placeholder) */
+input.placeholder-text, textarea.placeholder-text  {
+    color:#CCC;
+    font-style:italic;
+}
+/* Footer*/
+footer {
+    margin-top: 20px;
+    padding-top: 40px;
+    border-top: 1px solid #181818;
+    clear: both;
+}
+footer .g2 {
+    margin-top: 20px !important;
+    margin-right: 2% !important;
+}
+footer .g2.last {
+    margin-right: 0 !important;
+}
+footer h3 {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+footer p {
+    margin-top: 0;
+    line-height: 24px;
+}
