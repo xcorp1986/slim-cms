@@ -15,9 +15,6 @@ $app->hook('slim.before', function () use ($app) {
 	$dbh = getDb();
 	$url = $_SERVER['REQUEST_URI'];
 	$path = explode('/',$url);
-	//$path = explode('/', mysql_real_escape_string($_SERVER['REQUEST_URI']));
-	//var_dump($path);
-	// settings
 	$sth = $dbh->prepare('SELECT * from settings');
 	$sth->execute();
 	$stt = $sth->fetch();
@@ -27,18 +24,29 @@ $app->hook('slim.before', function () use ($app) {
 	$app->view()->appendData(array('baseURL' => $baseUrl, 'url'=>$url, 'path'=> $path, 'stt'=>$stt, 'usr_nam'=>$usr_nam));
 });
 session_start();
+
 // --- front-end routing --- //
+
+/**
+ * View home
+ */
 $app->get('/', function () use ($app) {
 	echo "Slim Front-end";
 });
 
 // --- Back-end routing---//
-// check if user is logged in.
+
+/**
+ * check if user is logged in.
+ */
 $checkUser = function() use ($app) {
 	$baseUrl = getBaseUrl();
 	if(!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) $app->redirect($baseUrl.'/cms/login');
 };
-// user log in
+
+/**
+ * user log in
+ */
 $app->post('/cms/login-process', function() use ($app)
 {
 	$usr = $_POST['usr'];
@@ -66,18 +74,26 @@ $app->post('/cms/login-process', function() use ($app)
 		$app->redirect($baseUrl.'/cms/login/error');
 	}
 });
-// user log out
+
+/**
+ * user log out
+ */
 $app->get('/cms/logout', function() use($app) {
 	session_destroy();
 	$baseUrl = getBaseUrl();
 	$app->redirect($baseUrl.'/cms');
 });
-// user is redirected here if not logged in
+
+/**
+ * user is redirected here if not logged in
+ */
 $app->get('/cms/login', function() use($app) {
 	$app->render('cms/login.html', array('loggedout' => "true"));
 });
-// view index
-// check if user is logged in using middleware
+
+/**
+ * view index
+ */
 $app->get('/cms', $checkUser, function () use ($app) {
 	$dbh = getDb();
 	$sth = $dbh->prepare("SELECT * from articles WHERE typ='nws' ORDER BY dat DESC");
@@ -88,6 +104,7 @@ $app->get('/cms', $checkUser, function () use ($app) {
 	$pag = $sth->fetchAll();
 	$app->render('cms/cnt.html', array('nws' => $nws, 'pag'=>$pag ));
 })->name('cms');
+
 /**
  * Clients list view
  */
@@ -112,7 +129,10 @@ $app->get('/cms/settings', $checkUser, function () use ($app) {
 	$rows = $sth->fetch(PDO::FETCH_ASSOC);
 	$app->render('cms/settings.html', array('stt' => $rows ));
 });
-// view profile
+
+/**
+ * view profile
+ */
 $app->get('/cms/profile(/:notf)', $checkUser, function ($notf=NULL) use ($app)
 {
 	if
@@ -137,7 +157,10 @@ $app->get('/cms/profile(/:notf)', $checkUser, function ($notf=NULL) use ($app)
 
 	$app->render('cms/profile.html', array('usr'=>$usr, 'notf'=>$notf ));
 });
-// change password
+
+/**
+ * change password
+ */
 $app->post('/cms/psw', $checkUser, function () use ($app)
 {
 	$usr = strip_tags($_POST['usr']);
@@ -150,12 +173,10 @@ $app->post('/cms/psw', $checkUser, function () use ($app)
 	$rdr = $baseUrl.'/cms/profile/changed';
 	$app->redirect($rdr);
 });
-// view stats
-$app->get('/cms/stats', $checkUser, function () use ($app) {
-	$app->render('cms/stats.html');
-})->name('cms');
 
-// get images (for page)
+/**
+ * get images (for page)
+ */
 $app->get('/cms/:typ/:id/imgs', $checkUser, function ($typ,$id) use ($app) {
 	$dbh = getDb();
 	$sth = $dbh->prepare('SELECT * from articles WHERE id=? ORDER BY seq DESC');
@@ -169,7 +190,10 @@ $app->get('/cms/:typ/:id/imgs', $checkUser, function ($typ,$id) use ($app) {
 	}
 	$app->render('cms/imgs.html', array('cnt' => $data, 'typ'=>$typ ));
 });
-// upload images
+
+/**
+ * upload images
+ */
 $app->post('/cms/upload', function () use ($app) {
 	$allowed = array('png', 'jpg', 'gif','zip');
 	if(isset($_FILES['upl']) && $_FILES['upl']['error'] == 0){
@@ -199,7 +223,10 @@ $app->post('/cms/upload', function () use ($app) {
 	echo '{"status":"error"}';
 	exit;
 });
-// delete images
+
+/**
+ * delete images
+ */
 $app->get('/cms/:typ/:id/:utt/img/delete/:fnm', $checkUser, function ($typ,$id,$utt="",$fnm) use ($app) {
 	$pid = $id;
 	$dbh = getDb();
@@ -212,7 +239,10 @@ $app->get('/cms/:typ/:id/:utt/img/delete/:fnm', $checkUser, function ($typ,$id,$
 	$baseUrl = getBaseUrl();
 	$app->redirect($baseUrl.'/cms/'.$typ.'/'.$id.'/'.$utt);
 });
-// sort images
+
+/**
+ * sort images
+ */
 $app->get('/cms/:utt/img/sort/:order+', $checkUser, function ($utt,$order) use ($app) {
 	$order = array_shift( $order );
   echo $order; // 'Something'.
@@ -228,10 +258,11 @@ $app->get('/cms/:utt/img/sort/:order+', $checkUser, function ($utt,$order) use (
   	$sth->execute(array($position,$item));
   	print_r($sth->errorInfo());
   }
-	//print_r ($sth);
-	//$app->redirect('/v7/public/cms/'.$utt);
 });
-// delete page thumb
+
+/**
+ * delete page thumb
+ */
 $app->get('/cms/:utt/:id/img/delete/', $checkUser, function ($utt,$id) use ($app) {
 	$pid = $id;
 	$fnm = "thumb.jpg";
@@ -245,7 +276,10 @@ $app->get('/cms/:utt/:id/img/delete/', $checkUser, function ($utt,$id) use ($app
 	$baseUrl = getBaseUrl();
 	$app->redirect($baseUrl.'/cms/'.$utt);
 });
-// get thumb (for page)
+
+/**
+ * get thumb (for page)
+ */
 $app->get('/cms/:utt/thumb/', $checkUser, function ($utt) use ($app) {
 	$dbh = getDb();
 	$sth = $dbh->prepare('SELECT * from articles WHERE utt=? ORDER BY dat DESC LIMIT 1');
@@ -258,30 +292,24 @@ $app->get('/cms/:utt/thumb/', $checkUser, function ($utt) use ($app) {
 		$data[] = array('txt'=>$row, 'img'=>$img, 'thumbs'=>$thumbs);
 	}
 	$app->render('cms/imgs.html', array('cnt' => $data));
-	//$app->redirect('/v7/public/cms/'.$utt);
 });
 
-// delete article
+/**
+ * Delete article
+ */
 $app->get('/cms/:tb/:id/delete', $checkUser, function ($tb,$id) use ($app) {
 	echo "delete ".$tb.$id;
 	$dbh = getDb();
 	$sth = $dbh->prepare("DELETE from $tb WHERE id=?");
 	$sth->execute(array($id));
 	$baseUrl = getBaseUrl();
-	if($tb=="site_fct") {
-		echo "rdr_fct";
-		$rdr = $baseUrl.'/cms/invoices';
-	} elseif($tb=="site_clt") {
-		echo "rdr_clt";
-		$rdr = $baseUrl.'/cms/clients';
-	} else {
-		$rdr = $baseUrl.'/cms';
-	}
+	$rdr = $baseUrl.'/cms';
 	$app->redirect($rdr);
 });
 
-
-// create new article ( + redirect to 'view article')
+/**
+ * create new article ( + redirect to 'view article')
+ */
 $app->get('/cms/new/:typ', $checkUser, function ($typ) use ($app) {
 
     $tb = getUrlTyp($typ);
@@ -300,8 +328,9 @@ $app->get('/cms/new/:typ', $checkUser, function ($typ) use ($app) {
 })->name('cms');
 
 
-
-// view article
+/**
+ * View article
+ */
 $app->get('/cms/:typ/:id(/:utt)', $checkUser, function ($typ,$id,$utt="") use ($app) {
 	$dbh = getDb();
 	$tb = getUrlTyp($typ);
@@ -331,7 +360,10 @@ function add_tag($tit) {
 		return $id;
 	}
 }
-// save (or create) page
+
+/**
+ * save article
+ */
 $app->post('/cms/save', $checkUser, function () use ($app) {
 	// general
 	$tb = strip_tags($_POST['tb']);
@@ -388,7 +420,9 @@ $app->post('/cms/save', $checkUser, function () use ($app) {
 	$app->redirect($rdr);
 });
 
-// set article to concept
+/**
+ * Set article to concept
+ */
 $app->get('/cms/:typ/:id/:utt/concept', $checkUser, function ($typ,$id,$utt) use ($app) {
 	$dbh = getDb();
 	$sth = $dbh->prepare('UPDATE articles SET pub=0 WHERE id=?');
@@ -396,7 +430,10 @@ $app->get('/cms/:typ/:id/:utt/concept', $checkUser, function ($typ,$id,$utt) use
 	$baseUrl = getBaseUrl();
 	$app->redirect($baseUrl.'/cms/'.$typ.'/'.$id.'/'.$utt);
 });
-// set article to Public
+
+/**
+ * Set article to public
+ */
 $app->get('/cms/:typ/:id/:utt/public', $checkUser, function ($typ,$id,$utt) use ($app) {
 	$dbh = getDb();
 	$sth = $dbh->prepare('UPDATE articles SET pub=1 WHERE id=?');
@@ -404,7 +441,10 @@ $app->get('/cms/:typ/:id/:utt/public', $checkUser, function ($typ,$id,$utt) use 
 	$baseUrl = getBaseUrl();
 	$app->redirect($baseUrl.'/cms/'.$typ.'/'.$id.'/'.$utt);
 });
-// homepage
+
+/**
+ * Show article on homepage
+ */
 $app->get('/cms/:utt/hp/:hp', $checkUser, function ($utt,$hp) use ($app) {
 	$dbh = getDb();
 	$sth = $dbh->prepare('UPDATE articles SET hp=? WHERE utt=?');
