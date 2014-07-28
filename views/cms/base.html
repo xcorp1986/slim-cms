@@ -20,10 +20,11 @@
   <link rel="stylesheet" href="{{ baseURL }}/public/css/cms.css">
 </head>
 <body>
+{% if(installer!="true") %}
   <header>
    <div>
     <ul>
-     <li><a href="{{ baseURL }}/">{{ stt.tit }}</a></li>
+     <li><a href="{{ baseURL }}/" target="_blank">{{ stt.tit }}</a></li>
    </ul>
  </div>
  {% if(loggedout!="true") %}
@@ -48,6 +49,7 @@
 </ul>
 </div>
 </header>
+{% endif %}
 <div class="bar g6"></div>
 <section class="container">
  {% block content %}{% endblock %}
@@ -58,6 +60,7 @@
 <!-- <script src="{{ baseURL }}/public/javascripts/jquery.ui.widget.js"></script>
 --><script src="{{ baseURL }}/public/javascripts/jquery.iframe-transport.js"></script>
 <script src="{{ baseURL }}/public/javascripts/jquery.fileupload.js"></script>
+<script src="{{ baseURL }}/public/javascripts/jquery.steps.min.js"></script>
 <script src="{{ baseURL }}/public/javascripts/underscore-min.js"></script>
 <script src="{{ baseURL }}/public/javascripts/vendor/custom.modernizr.js"></script>
 <script>

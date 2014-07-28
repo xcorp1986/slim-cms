@@ -3,50 +3,56 @@ require 'vendor/autoload.php';
 require 'public/lib/functions.php';
 require 'public/lib/config.php';
 date_default_timezone_set("Europe/Amsterdam");
-// Setup custom Twig view
-$twigView = new \Slim\Extras\Views\Twig();
+
 $app = new \Slim\Slim(array(
 	'debug' => true,
-	'view' => $twigView,
+	'view' => new \Slim\Views\Twig(),
 	'templates.path' => 'views/',
-	));
+));
 $app->hook('slim.before', function () use ($app) {
 	$baseUrl = getBaseUrl();
-	$dbh = getDb();
 	$url = $_SERVER['REQUEST_URI'];
 	$path = explode('/',$url);
-	$sth = $dbh->prepare('SELECT * from settings');
-	$sth->execute();
-	$stt = $sth->fetch();
 
 
-	$usr_nam = isset($_SESSION['$usr_nam']) ? strip_tags($_SESSION['$usr_nam']) : "";
-	$app->view()->appendData(array('baseURL' => $baseUrl, 'url'=>$url, 'path'=> $path, 'stt'=>$stt, 'usr_nam'=>$usr_nam));
+
+	if( $url != "/cms/login-process" && $url != "/cms/installer" && $url != "/cms/installer-process-db"  ) {
+
+		$dbh = getDb();
+		$sth = $dbh->prepare('SELECT * from settings');
+		$sth->execute();
+		$stt = $sth->fetch();
+
+		$usr_nam = isset($_SESSION['$usr_nam']) ? strip_tags($_SESSION['$usr_nam']) : "";
+		$app->view()->appendData(array('baseURL' => $baseUrl, 'url'=>$url, 'path'=> $path, 'stt'=>$stt, 'usr_nam'=>$usr_nam));
+
+	}
 });
 session_start();
 
 // --- front-end routing --- //
 
 /**
- * View home
- */
+* View home
+*/
 $app->get('/', function () use ($app) {
 	echo "Slim Front-end";
 });
 
+
 // --- Back-end routing---//
 
 /**
- * check if user is logged in.
- */
+* check if user is logged in.
+*/
 $checkUser = function() use ($app) {
 	$baseUrl = getBaseUrl();
 	if(!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) $app->redirect($baseUrl.'/cms/login');
 };
 
 /**
- * user log in
- */
+* user log in
+*/
 $app->post('/cms/login-process', function() use ($app)
 {
 	$usr = $_POST['usr'];
@@ -76,8 +82,8 @@ $app->post('/cms/login-process', function() use ($app)
 });
 
 /**
- * user log out
- */
+* user log out
+*/
 $app->get('/cms/logout', function() use($app) {
 	session_destroy();
 	$baseUrl = getBaseUrl();
@@ -85,15 +91,62 @@ $app->get('/cms/logout', function() use($app) {
 });
 
 /**
- * user is redirected here if not logged in
- */
+* user is redirected here if not logged in
+*/
 $app->get('/cms/login', function() use($app) {
 	$app->render('cms/login.html', array('loggedout' => "true"));
 });
 
+
 /**
- * view index
- */
+* view installer
+*/
+$app->get('/cms/installer/', function () use ($app) {
+
+
+	$app->render('cms/installer.html', array('installer' => "true"));
+})->name('cms');
+
+$app->post('/cms/installer-process-db', function () use ($app) {
+
+	// database setup (run .sql file)
+	$hostname = $_POST['db-hostname'];
+	$dbUser = $_POST['db-user'];
+	$dbPassword = $_POST['db-password'];
+	$database = $_POST['db-database'];
+	$sql = file_get_contents('sql/slim-cms.sql');
+	$dbh = getDb($hostname,$database,$dbUser,$dbPassword); // http://stackoverflow.com/questions/147821/loading-sql-files-from-within-php
+	$qry = $dbh->exec($sql);
+
+	// save database details in json file
+	$fp = fopen('config.json', 'w');
+	fwrite($fp, json_encode(array($hostname,$database,$dbUser,$dbPassword)));
+	fclose($fp);
+
+	// insert first user
+	$user = $_POST['user'];
+	$password = md5($_POST['password']);
+	$sth = $dbh->prepare('INSERT INTO users SET id=1, nam=?, psw=?');
+	print_r($sth->errorInfo());
+	$sth->execute(array($user,$password));
+
+	// insert site title/desc
+	$title = $_POST['title'];
+	$description = $_POST['desc'];
+	$sth = $dbh->prepare('INSERT INTO settings SET id=1, tit=?, txt=?');
+	print_r($sth->errorInfo());
+	$sth->execute(array($title,$description));
+
+
+	//$dbh = getDb($hostname,$database,$user,$password);
+
+
+
+})->name('cms');
+
+/**
+* view index
+*/
 $app->get('/cms', $checkUser, function () use ($app) {
 	$dbh = getDb();
 	$sth = $dbh->prepare("SELECT * from articles WHERE typ='nws' ORDER BY dat DESC");
@@ -106,8 +159,8 @@ $app->get('/cms', $checkUser, function () use ($app) {
 })->name('cms');
 
 /**
- * Clients list view
- */
+* Clients list view
+*/
 $app->get('/cms/articles', $checkUser, function () use ($app) {
 	$dbh = getDb();
 	$sth = $dbh->prepare("SELECT * from site_art ORDER BY id DESC");
@@ -120,8 +173,8 @@ $app->get('/cms/articles', $checkUser, function () use ($app) {
 });
 
 /**
- *  view Settings
- */
+*  view Settings
+*/
 $app->get('/cms/settings', $checkUser, function () use ($app) {
 	$dbh = getDb();
 	$sth = $dbh->prepare("SELECT * from settings ORDER BY id ASC");
@@ -131,12 +184,12 @@ $app->get('/cms/settings', $checkUser, function () use ($app) {
 });
 
 /**
- * view profile
- */
+* view profile
+*/
 $app->get('/cms/profile(/:notf)', $checkUser, function ($notf=NULL) use ($app)
 {
 	if
-		($notf=="changed")
+	($notf=="changed")
 	{
 		$notf = "Het wachtwoord is gewijzigd";
 	} else
@@ -148,7 +201,7 @@ $app->get('/cms/profile(/:notf)', $checkUser, function ($notf=NULL) use ($app)
 	$sth->execute(array($_SESSION['$usr_id']));
 	$rows = $sth->fetchAll();
 	foreach
-		($rows as $row)
+	($rows as $row)
 	{
 		$usr_res = $row["nam"];
 		$psw_res = $row["psw"];
@@ -159,8 +212,8 @@ $app->get('/cms/profile(/:notf)', $checkUser, function ($notf=NULL) use ($app)
 });
 
 /**
- * change password
- */
+* change password
+*/
 $app->post('/cms/psw', $checkUser, function () use ($app)
 {
 	$usr = strip_tags($_POST['usr']);
@@ -175,8 +228,8 @@ $app->post('/cms/psw', $checkUser, function () use ($app)
 });
 
 /**
- * get images (for page)
- */
+* get images (for page)
+*/
 $app->get('/cms/:typ/:id/imgs', $checkUser, function ($typ,$id) use ($app) {
 	$dbh = getDb();
 	$sth = $dbh->prepare('SELECT * from articles WHERE id=? ORDER BY seq DESC');
@@ -192,8 +245,8 @@ $app->get('/cms/:typ/:id/imgs', $checkUser, function ($typ,$id) use ($app) {
 });
 
 /**
- * upload images
- */
+* upload images
+*/
 $app->post('/cms/upload', function () use ($app) {
 	$allowed = array('png', 'jpg', 'gif','zip');
 	if(isset($_FILES['upl']) && $_FILES['upl']['error'] == 0){
@@ -225,8 +278,8 @@ $app->post('/cms/upload', function () use ($app) {
 });
 
 /**
- * delete images
- */
+* delete images
+*/
 $app->get('/cms/:typ/:id/:utt/img/delete/:fnm', $checkUser, function ($typ,$id,$utt="",$fnm) use ($app) {
 	$pid = $id;
 	$dbh = getDb();
@@ -241,28 +294,28 @@ $app->get('/cms/:typ/:id/:utt/img/delete/:fnm', $checkUser, function ($typ,$id,$
 });
 
 /**
- * sort images
- */
+* sort images
+*/
 $app->get('/cms/:utt/img/sort/:order+', $checkUser, function ($utt,$order) use ($app) {
 	$order = array_shift( $order );
-  echo $order; // 'Something'.
-  $order =  explode(",", $order);
-  echo "order:".$order."<br>";
+	echo $order; // 'Something'.
+	$order =  explode(",", $order);
+	echo "order:".$order."<br>";
 	//$order = explode("," , $order);
-  var_dump($order);
-  foreach ($order as $position => $item) {
-  	echo "<br>position: ".$position;
-  	echo "<br>item: ".$item."<br>";
-  	$dbh = getDb();
-  	$sth = $dbh->prepare("UPDATE images SET seq=? WHERE id=?");
-  	$sth->execute(array($position,$item));
-  	print_r($sth->errorInfo());
-  }
+	var_dump($order);
+	foreach ($order as $position => $item) {
+		echo "<br>position: ".$position;
+		echo "<br>item: ".$item."<br>";
+		$dbh = getDb();
+		$sth = $dbh->prepare("UPDATE images SET seq=? WHERE id=?");
+		$sth->execute(array($position,$item));
+		print_r($sth->errorInfo());
+	}
 });
 
 /**
- * delete page thumb
- */
+* delete page thumb
+*/
 $app->get('/cms/:utt/:id/img/delete/', $checkUser, function ($utt,$id) use ($app) {
 	$pid = $id;
 	$fnm = "thumb.jpg";
@@ -278,8 +331,8 @@ $app->get('/cms/:utt/:id/img/delete/', $checkUser, function ($utt,$id) use ($app
 });
 
 /**
- * get thumb (for page)
- */
+* get thumb (for page)
+*/
 $app->get('/cms/:utt/thumb/', $checkUser, function ($utt) use ($app) {
 	$dbh = getDb();
 	$sth = $dbh->prepare('SELECT * from articles WHERE utt=? ORDER BY dat DESC LIMIT 1');
@@ -295,8 +348,8 @@ $app->get('/cms/:utt/thumb/', $checkUser, function ($utt) use ($app) {
 });
 
 /**
- * Delete article
- */
+* Delete article
+*/
 $app->get('/cms/:tb/:id/delete', $checkUser, function ($tb,$id) use ($app) {
 	echo "delete ".$tb.$id;
 	$dbh = getDb();
@@ -308,29 +361,29 @@ $app->get('/cms/:tb/:id/delete', $checkUser, function ($tb,$id) use ($app) {
 });
 
 /**
- * create new article ( + redirect to 'view article')
- */
+* create new article ( + redirect to 'view article')
+*/
 $app->get('/cms/new/:typ', $checkUser, function ($typ) use ($app) {
 
-    $tb = getUrlTyp($typ);
-    $dat = date("Y-m-d");
-    $dbh = getDb();
-    $sth = $dbh->prepare("SELECT max(id) as id FROM $tb ORDER by id asc");
-    $sth->execute();
-    $last_id = $sth->fetch();
-    $id = $last_id[0]+1;
-    $utt = "...";
-    $sth = $dbh->prepare("INSERT INTO $tb SET id=?, pid=?, utt=?, dat=?, typ=?, pub=1");
-    $sth->execute(array($id,$id,$utt,$dat,$typ));
-    //print_r($sth->errorInfo());
-    $rdr = "/cms/".$tb."/".$id;
-    $app->redirect($rdr);
+	$tb = getUrlTyp($typ);
+	$dat = date("Y-m-d");
+	$dbh = getDb();
+	$sth = $dbh->prepare("SELECT max(id) as id FROM $tb ORDER by id asc");
+	$sth->execute();
+	$last_id = $sth->fetch();
+	$id = $last_id[0]+1;
+	$utt = "...";
+	$sth = $dbh->prepare("INSERT INTO $tb SET id=?, pid=?, utt=?, dat=?, typ=?, pub=1");
+	$sth->execute(array($id,$id,$utt,$dat,$typ));
+	//print_r($sth->errorInfo());
+	$rdr = "/cms/".$tb."/".$id;
+	$app->redirect($rdr);
 })->name('cms');
 
 
 /**
- * View article
- */
+* View article
+*/
 $app->get('/cms/:typ/:id(/:utt)', $checkUser, function ($typ,$id,$utt="") use ($app) {
 	$dbh = getDb();
 	$tb = getUrlTyp($typ);
@@ -362,8 +415,8 @@ function add_tag($tit) {
 }
 
 /**
- * save article
- */
+* save article
+*/
 $app->post('/cms/save', $checkUser, function () use ($app) {
 	// general
 	$tb = strip_tags($_POST['tb']);
@@ -421,8 +474,8 @@ $app->post('/cms/save', $checkUser, function () use ($app) {
 });
 
 /**
- * Set article to concept
- */
+* Set article to concept
+*/
 $app->get('/cms/:typ/:id/:utt/concept', $checkUser, function ($typ,$id,$utt) use ($app) {
 	$dbh = getDb();
 	$sth = $dbh->prepare('UPDATE articles SET pub=0 WHERE id=?');
@@ -432,8 +485,8 @@ $app->get('/cms/:typ/:id/:utt/concept', $checkUser, function ($typ,$id,$utt) use
 });
 
 /**
- * Set article to public
- */
+* Set article to public
+*/
 $app->get('/cms/:typ/:id/:utt/public', $checkUser, function ($typ,$id,$utt) use ($app) {
 	$dbh = getDb();
 	$sth = $dbh->prepare('UPDATE articles SET pub=1 WHERE id=?');
@@ -443,8 +496,8 @@ $app->get('/cms/:typ/:id/:utt/public', $checkUser, function ($typ,$id,$utt) use 
 });
 
 /**
- * Show article on homepage
- */
+* Show article on homepage
+*/
 $app->get('/cms/:utt/hp/:hp', $checkUser, function ($utt,$hp) use ($app) {
 	$dbh = getDb();
 	$sth = $dbh->prepare('UPDATE articles SET hp=? WHERE utt=?');

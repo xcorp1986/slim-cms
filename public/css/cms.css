@@ -105,6 +105,7 @@ h1,h2,h3 {
 }
 h1 {
 	font-size: 24px;
+  margin-bottom: 20px;
 }
 h1 a {
 	color: #999;
@@ -239,7 +240,6 @@ input[type=text], input[type=password], textarea, select {
 	display: block;
 	width: auto;
 	margin:  0 0 10px 0;
-	border: none;
 	border: 1px solid #ccc;
 	border-radius: 2px;
 	background-color: #fff;
@@ -259,9 +259,10 @@ input[type=file] {
 	border: 1px solid #ccc;
 	line-height: 10px;
 }
-input[type=submit], .btn, button {
+input[type=submit], .btn, button, .actions a {
 	border: none;
 	margin-right: 1em;
+  margin-top: 20px;
 	padding: 9px 18px;
 	text-decoration: none;
 	border-radius: 2px;
@@ -801,8 +802,20 @@ input.file {
  /**
   * login
   */
-  .login input {
-  	margin: 10px;
+
+ .login form, .installer {
+   position: absolute;
+   width: 250px;
+   height: 500px;
+   left: 50%;
+   top: 50%;
+   margin-left: -125px;
+   margin-top: -250px;
+   /*border: 1px solid #ccc;*/
+
+ }
+  .login input, .installer input {
+      width: auto !important;
   }
   /* notification */
   .notification {
@@ -817,6 +830,33 @@ input.file {
 /* 	font-size: 15px;
 */ 	color: #fff;
 background-color: #FF696C;
+}
+
+/**
+ * installer
+ */
+
+
+.installer p, .installer h1, .installer input, .installer h2 {
+  margin: 10px;
+}
+
+.installer li {
+  display: inline;
+  margin-right: 10px;
+}
+
+div.steps {
+    display: none;
+}
+
+#installer h1 {
+  display: none;
+}
+
+.actions ul {
+  margin: 0;
+  padding: 10px;
 }
 /**
  * progressbar
