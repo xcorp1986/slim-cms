@@ -71,6 +71,7 @@ CREATE TABLE `settings` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `txt` varchar(255) DEFAULT NULL,
   `tit` varchar(255) DEFAULT NULL,
+  `url` varchar(255) DEFAULT NULL,
   `seq` int(11) DEFAULT NULL,
   `adr` text,
   `ctt` text,

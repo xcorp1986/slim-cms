@@ -17,7 +17,7 @@ $(document).ready(function() {
         console.log("done: "+data);
       }, "json");
 
-      //document.location.href='/cms/login';
+      document.location.href='/cms/login';
 
     }
   });

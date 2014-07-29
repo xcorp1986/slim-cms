@@ -3,29 +3,34 @@ require 'vendor/autoload.php';
 require 'public/lib/functions.php';
 require 'public/lib/config.php';
 date_default_timezone_set("Europe/Amsterdam");
-
+/**
+ * App settings
+ * @var [type]
+ */
 $app = new \Slim\Slim(array(
 	'debug' => true,
 	'view' => new \Slim\Views\Twig(),
 	'templates.path' => 'views/',
 ));
+/**
+ * Slim before hook
+ */
 $app->hook('slim.before', function () use ($app) {
 	$baseUrl = getBaseUrl();
 	$url = $_SERVER['REQUEST_URI'];
 	$path = explode('/',$url);
 
-
-
+	// append data to all views
 	if( $url != "/cms/login-process" && $url != "/cms/installer" && $url != "/cms/installer-process-db"  ) {
 
 		$dbh = getDb();
 		$sth = $dbh->prepare('SELECT * from settings');
 		$sth->execute();
-		$stt = $sth->fetch();
+		$sth->errorInfo();
+		$settings = $sth->fetch(PDO::FETCH_ASSOC);
 
 		$usr_nam = isset($_SESSION['$usr_nam']) ? strip_tags($_SESSION['$usr_nam']) : "";
-		$app->view()->appendData(array('baseURL' => $baseUrl, 'url'=>$url, 'path'=> $path, 'stt'=>$stt, 'usr_nam'=>$usr_nam));
-
+		$app->view()->appendData(array('baseURL' => $baseUrl, 'url'=>$url, 'path'=> $path, 'settings'=>$settings, 'usr_nam'=>$usr_nam));
 	}
 });
 session_start();
@@ -37,6 +42,7 @@ session_start();
 */
 $app->get('/', function () use ($app) {
 	echo "Slim Front-end";
+	echo getBaseUrl();
 });
 
 
@@ -94,7 +100,20 @@ $app->get('/cms/logout', function() use($app) {
 * user is redirected here if not logged in
 */
 $app->get('/cms/login', function() use($app) {
-	$app->render('cms/login.html', array('loggedout' => "true"));
+
+	// check if installer has been run
+	$dbh = getDb();
+	$sth = $dbh->prepare('SELECT 1 FROM settings LIMIT 1;');
+	$sth->execute();
+	$rows = $sth->fetchAll(PDO::FETCH_ASSOC);
+
+	if($rows) {
+		$app->render('cms/login.html', array('loggedout' => "true"));
+	} else {
+		$baseUrl = getBaseUrl();
+		$app->redirect($baseUrl.'/cms/installer');
+	}
+
 });
 
 
@@ -103,10 +122,13 @@ $app->get('/cms/login', function() use($app) {
 */
 $app->get('/cms/installer/', function () use ($app) {
 
-
 	$app->render('cms/installer.html', array('installer' => "true"));
+
 })->name('cms');
 
+/**
+ * procces installer
+ */
 $app->post('/cms/installer-process-db', function () use ($app) {
 
 	// database setup (run .sql file)
@@ -114,14 +136,16 @@ $app->post('/cms/installer-process-db', function () use ($app) {
 	$dbUser = $_POST['db-user'];
 	$dbPassword = $_POST['db-password'];
 	$database = $_POST['db-database'];
-	$sql = file_get_contents('sql/slim-cms.sql');
-	$dbh = getDb($hostname,$database,$dbUser,$dbPassword); // http://stackoverflow.com/questions/147821/loading-sql-files-from-within-php
-	$qry = $dbh->exec($sql);
 
 	// save database details in json file
 	$fp = fopen('config.json', 'w');
 	fwrite($fp, json_encode(array($hostname,$database,$dbUser,$dbPassword)));
 	fclose($fp);
+
+	$sql = file_get_contents('sql/slim-cms.sql');
+	$dbh = getDb(); //$hostname,$database,$dbUser,$dbPassword // http://stackoverflow.com/questions/147821/loading-sql-files-from-within-php
+	$qry = $dbh->exec($sql);
+
 
 	// insert first user
 	$user = $_POST['user'];
@@ -133,54 +157,39 @@ $app->post('/cms/installer-process-db', function () use ($app) {
 	// insert site title/desc
 	$title = $_POST['title'];
 	$description = $_POST['desc'];
-	$sth = $dbh->prepare('INSERT INTO settings SET id=1, tit=?, txt=?');
+	$baseurl = $_POST['baseurl'];
+	$sth = $dbh->prepare('INSERT INTO settings SET id=1, tit=?, txt=?, url=?');
 	print_r($sth->errorInfo());
-	$sth->execute(array($title,$description));
+	$sth->execute(array($title,$description,$baseurl));
 
-
-	//$dbh = getDb($hostname,$database,$user,$password);
-
-
-
-})->name('cms');
-
-/**
-* view index
-*/
-$app->get('/cms', $checkUser, function () use ($app) {
-	$dbh = getDb();
-	$sth = $dbh->prepare("SELECT * from articles WHERE typ='nws' ORDER BY dat DESC");
-	$sth->execute();
-	$nws = $sth->fetchAll();
-	$sth = $dbh->prepare("SELECT * from articles WHERE typ='pag' ORDER BY dat DESC");
-	$sth->execute();
-	$pag = $sth->fetchAll();
-	$app->render('cms/cnt.html', array('nws' => $nws, 'pag'=>$pag ));
 })->name('cms');
 
 /**
 * Clients list view
 */
-$app->get('/cms/articles', $checkUser, function () use ($app) {
+$app->get('/cms(:/articles)', $checkUser, function () use ($app) {
+
 	$dbh = getDb();
-	$sth = $dbh->prepare("SELECT * from site_art ORDER BY id DESC");
+	$sth = $dbh->prepare("SELECT * from articles ORDER BY id DESC");
 	$sth->execute();
 	$rows = $sth->fetchAll(PDO::FETCH_ASSOC);
 	$sth->execute();
-	$fct = $sth->fetchAll();
-	$typ = "clt";
-	$app->render('cms/articles.html', array('fct' => $fct, 'typ'=>$typ));
+
+	$app->render('cms/articles.html', array('tb'=>'articles', 'articles' => $rows));
+
 });
 
 /**
 *  view Settings
 */
 $app->get('/cms/settings', $checkUser, function () use ($app) {
+
 	$dbh = getDb();
 	$sth = $dbh->prepare("SELECT * from settings ORDER BY id ASC");
 	$sth->execute();
 	$rows = $sth->fetch(PDO::FETCH_ASSOC);
 	$app->render('cms/settings.html', array('stt' => $rows ));
+
 });
 
 /**
@@ -199,29 +208,27 @@ $app->get('/cms/profile(/:notf)', $checkUser, function ($notf=NULL) use ($app)
 	$dbh = getDb();
 	$sth = $dbh->prepare('SELECT * from users WHERE id=?');
 	$sth->execute(array($_SESSION['$usr_id']));
-	$rows = $sth->fetchAll();
-	foreach
-	($rows as $row)
-	{
-		$usr_res = $row["nam"];
-		$psw_res = $row["psw"];
-		$usr[] = array('nam'=>$usr_res, 'psw'=>$psw_res);
-	}
+	$rows = $sth->fetch(PDO::FETCH_ASSOC);
 
-	$app->render('cms/profile.html', array('usr'=>$usr, 'notf'=>$notf ));
+
+	$app->render('cms/profile.html', array('user'=>$rows, 'notf'=>$notf ));
 });
 
 /**
-* change password
+* Save profile
 */
-$app->post('/cms/psw', $checkUser, function () use ($app)
+$app->post('/cms/profile/save', $checkUser, function () use ($app)
 {
-	$usr = strip_tags($_POST['usr']);
-	$psw = md5(strip_tags($_POST['psw']));
-	echo $usr.$psw;
-	$dbh = getDb();
-	$sth = $dbh->prepare("UPDATE users SET psw=? WHERE nam=?");
-	$sth->execute(array($psw,$usr));
+	$usr = strip_tags($_POST['username']);
+	$psw = md5(strip_tags($_POST['password']));
+
+	if($psw != "") {
+		$dbh = getDb();
+		$sth = $dbh->prepare("UPDATE users SET psw=? WHERE nam=?");
+		$sth->execute(array($psw,$usr));
+	}
+
+	//redirect
 	$baseUrl = getBaseUrl();
 	$rdr = $baseUrl.'/cms/profile/changed';
 	$app->redirect($rdr);
@@ -363,9 +370,8 @@ $app->get('/cms/:tb/:id/delete', $checkUser, function ($tb,$id) use ($app) {
 /**
 * create new article ( + redirect to 'view article')
 */
-$app->get('/cms/new/:typ', $checkUser, function ($typ) use ($app) {
+$app->get('/cms/new/:tb', $checkUser, function ($tb) use ($app) {
 
-	$tb = getUrlTyp($typ);
 	$dat = date("Y-m-d");
 	$dbh = getDb();
 	$sth = $dbh->prepare("SELECT max(id) as id FROM $tb ORDER by id asc");
@@ -373,8 +379,8 @@ $app->get('/cms/new/:typ', $checkUser, function ($typ) use ($app) {
 	$last_id = $sth->fetch();
 	$id = $last_id[0]+1;
 	$utt = "...";
-	$sth = $dbh->prepare("INSERT INTO $tb SET id=?, pid=?, utt=?, dat=?, typ=?, pub=1");
-	$sth->execute(array($id,$id,$utt,$dat,$typ));
+	$sth = $dbh->prepare("INSERT INTO $tb SET id=?, pid=?, utt=?, dat=?,pub=1");
+	$sth->execute(array($id,$id,$utt,$dat));
 	//print_r($sth->errorInfo());
 	$rdr = "/cms/".$tb."/".$id;
 	$app->redirect($rdr);
@@ -389,12 +395,9 @@ $app->get('/cms/:typ/:id(/:utt)', $checkUser, function ($typ,$id,$utt="") use ($
 	$tb = getUrlTyp($typ);
 	$sth = $dbh->prepare("SELECT * from articles WHERE id=? ORDER BY dat DESC LIMIT 1");
 	$sth->execute(array($id));
-	$rows = $sth->fetchAll(PDO::FETCH_ASSOC);
-	$data = "";
-	foreach($rows as $row){
-		$data[] = array('txt'=>$row,'tb'=>$tb);
-	}
-	$app->render('cms/sin.html', array('cnt' => $data));
+	$article = $sth->fetch(PDO::FETCH_ASSOC);
+
+	$app->render('cms/sin.html', array('article' => $article, 'tb'=> $tb));
 })->name('cms');
 
 
@@ -433,6 +436,7 @@ $app->post('/cms/save', $checkUser, function () use ($app) {
 	$adr = isset($_POST['adr']) ? stripslashes($_POST['adr']) : "";
 	$ctt = isset($_POST['ctt']) ? stripslashes($_POST['ctt']) : "";
 	$soc = isset($_POST['soc']) ? stripslashes($_POST['soc']) : "";
+	$url = isset($_POST['url']) ? stripslashes($_POST['url']) : "";
 
 	// make url title
 	if(!$utt || $utt=="...") {
@@ -442,15 +446,15 @@ $app->post('/cms/save', $checkUser, function () use ($app) {
 	// change date format
 	$dat = date('Y-m-d',strtotime($dat));
 
+	// save settings
 	if ($tb=="settings"){
-		echo "update settings";
 		$dbh = getDb();
-		$sth = $dbh->prepare("UPDATE settings SET tit=?, txt=?, adr=?, ctt=?, soc=? WHERE id=1");
-		$sth->execute(array($tit,$txt,$adr,$ctt,$soc));
+		$sth = $dbh->prepare("UPDATE settings SET tit=?, txt=?, url=?, adr=?, ctt=?, soc=? WHERE id=1");
+		$sth->execute(array($tit,$txt,$url,$adr,$ctt,$soc));
 		print_r($sth->errorInfo());
 	}
+	// save content
 	elseif ($id){
-		// update content
 		$dbh = getDb();
 		$sth = $dbh->prepare("UPDATE articles SET dat=?, tit=?, utt=?, txt=?, typ=?, tag=?, ytb=? WHERE id=?");
 		$sth->execute(array($dat,$tit,$utt,$txt,$typ,$tag,$ytb,$id));

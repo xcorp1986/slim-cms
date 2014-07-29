@@ -1,32 +1,37 @@
 {% extends "cms/base.html" %}
 {% block content %}
 <div class="list-table">
-	<h1>Klanten</h1>
-	<a href="{{ baseURL }}/cms/new/clt" class="btn new right">Nieuwe klant</a>
+	<h1>Artikelen</h1>
+	<a href="{{ baseURL }}/cms/new/{{ tb }}" class="btn new right">Nieuw artikel</a>
 	<hr>
 	<table class="lst first">
 		<thead>
 			<tr>
 				<td>Datum</td>
-				<td>Naam klant</td>
+				<td>Artikel</td>
+				<td>Type</td>
 			</tr>
 		</thead>
 		<tbody>
-			{% for cnt_row in fct %}
+			{% for article in articles %}
 			<tr>
-				<td><span class="dat">{{ cnt_row.dat }}</span></td>
+				<!-- date -->
+				<td><span class="dat">{{ article.dat }}</span></td>
+
+				<!-- title -->
 				<td>
-					<a href="{{ baseURL }}/cms/clt/{{cnt_row.id }}/{{ cnt_row.utt }}">
+					<a href="{{ baseURL }}/cms/{{ tb }}/{{article.id }}/{{ article.utt }}">
 						<strong class="pub">
-							{% if cnt_row.bdf != "" %}
-								{{ cnt_row.bdf|e }} ({{ cnt_row.vnm|e }} {{ cnt_row.nam|e }})
-							{% elseif cnt_row.naml == "" %}
-								{{ cnt_row.vnm|e }} {{ cnt_row.nam|e }}
-							{% else %}
-								{{ cnt_row.vnml|e }} {{ cnt_row.naml|e }} ({{ cnt_row.vnm|e }} {{ cnt_row.nam|e }})
-							{% endif %}
+							{{ article.tit|e }}
+						</strong>
+					</a>
+				</td>
 
-
+				<!-- type -->
+				<td>
+					<a href="{{ baseURL }}/cms/{{ tb }}/{{article.id }}/{{ article.utt }}">
+						<strong class="pub">
+							{{ article.typ|e }}
 						</strong>
 					</a>
 				</td>

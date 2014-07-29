@@ -106,6 +106,7 @@ h1,h2,h3 {
 h1 {
 	font-size: 24px;
   margin-bottom: 20px;
+  line-height: 43px;
 }
 h1 a {
 	color: #999;
@@ -230,7 +231,7 @@ td,th {
 /**
 * Forms
 */
-input, textarea {
+input, textarea, select {
   font-family: 'Open Sans', sans-serif !important;
 }
 
@@ -248,11 +249,13 @@ input[type=text], input[type=password], textarea, select {
 	padding: 6px;
 }
 select {
-	font-size: 13px;
-	height: 30px;
+	width: 100%;
+	height: 39px;
 	margin-top: 6px;
 	-webkit-appearance: menulist-button;
+	border-radius: 2px !important;
 }
+
 input[type=file] {
 	position: absolute;
 	width: auto !important;
@@ -263,6 +266,7 @@ input[type=submit], .btn, button, .actions a {
 	border: none;
 	margin-right: 1em;
   margin-top: 20px;
+  margin-bottom: 20px;
 	padding: 9px 18px;
 	text-decoration: none;
 	border-radius: 2px;

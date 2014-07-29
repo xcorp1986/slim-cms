@@ -4,24 +4,21 @@
 
 	<form enctype="multipart/form-data" action="{{ baseURL }}/cms/save" method="post" name="main">
 		<div class="fields">
-			<input type="text" name="id" class="id hidden" value="{{ cnt.0.txt.id }}">
-			<input type="text" name="tb" class="tb hidden" value="{{ tb }}{{ cnt.0.tb }}">
+			<!-- id (hidden) -->
+			<input type="text" name="id" class="id hidden" value="{{ article.id }}">
 
-			{% if ( cnt.0.tb == 'articles' ) or tb == ( 'articles' ) %}
+			<!-- tb (hidden) -->
+			<input type="text" name="tb" class="tb hidden" value="{{ tb }}">
 			<h1>Artikel</h1>
+
 			<hr>
-			{% endif %}
 
+			<!-- title -->
+			<input type="text" name="tit" class="tit" autofocus="autofocus" value="{{ article.tit }}" placeholder="Title">
 
+			<!-- url title (hidden) -->
+			<input type="text" name="utt" class="utt hidden" value="{{ article.utt }}" placeholder="URL title">
 
-
-			{% if ( cnt.0.tb == 'articles' ) or tb == ( 'articles' ) or ( cnt.0.tb == 'site_csp' ) or tb == ( 'site_csp' )  %}
-			<input type="text" name="tit" class="tit" autofocus="autofocus" value="{{ cnt.0.txt.tit }}" placeholder="Title">
-			{% endif %}
-			<input type="text" name="utt" class="utt hidden" value="{{ cnt.0.txt.utt }}" placeholder="URL title">
-			<input type="text" name="typ" class="typ hidden" value="{{ typ }}{{ cnt.0.txt.typ }}" placeholder="cnt">
-			{% if ( cnt.0.tb == 'articles' ) or tb == ( 'articles' ) or ( cnt.0.tb == 'site_csp' ) or tb == ( 'site_csp' ) %}
-			{% if ( cnt.0.tb != 'site_csp' ) and tb != ( 'site_csp' ) %}
 			<!-- textarea toolbar -->
 			<div id="toolbar" class="toolbar" style="display: none;">
 				<ul class="dropdown">
@@ -35,9 +32,9 @@
 					</li>
 				</ul>
 
-<!-- 				<a data-wysihtml5-command="bold" title="CTRL+B"><i class="fa fa-bold"></i></a>
+ 				<a data-wysihtml5-command="bold" title="CTRL+B"><i class="fa fa-bold"></i></a>
 				<a data-wysihtml5-command="italic" title="CTRL+I"><i class="fa fa-italic"></i></a>
-			-->			<a data-wysihtml5-command="createLink" {% if ( cnt.0.tb == 'shop_prd' ) %}class="last"{% endif %}><i class="fa fa-link"></i></a>
+						<a data-wysihtml5-command="createLink"><i class="fa fa-link"></i></a>
 			<div data-wysihtml5-dialog="createLink" style="display: none;">
 				<label>
 					Link:
@@ -49,85 +46,82 @@
 			<a data-wysihtml5-command="insertUnorderedList"><i class="fa fa-list-ul"></i></a>
 			<a data-wysihtml5-command="insertOrderedList" class="last"><i class="fa fa-list-ol"></i></a>
 		</div>
-		{% endif %}
+
 		<!-- textarea -->
-		<textarea id="textarea" class="textarea" onkeyup="textAreaAdjust(this)" placeholder="Enter text ..." name="txt" style="height:300px !important">{{ cnt.0.txt.txt }}</textarea>
-		{% endif %}
+		<textarea id="textarea" class="textarea" onkeyup="textAreaAdjust(this)" placeholder="Enter text ..." name="txt" style="height:300px !important">{{ article.txt }}</textarea>
 
-<!-- sticky bottom -->
-<div id="sticky">
-	<div class="g3">
-		<input type="submit" name="submit" value="Opslaan" class="subm">
-		{% if cnt.0.txt.id !="" %}
-		<a href="{{ baseURL }}/cms/{{ cnt.0.tb }}{{ tb }}/{{ cnt.0.txt.id }}/delete" class="del">of verwijder</a>
-		{% endif %}
-	</div>
-	<div class="g3 last">
+		<!-- type -->
+		{{ article.typ }}
+		<select name="typ">
+			<option value="" {% if article.typ == "" %}selected {% endif %}>Artikel-type...</option>
+			<option value="news" {% if article.typ == "news" %}selected {% endif %}>Nieuws</option>
+			<option value="intro" {% if article.typ == "intro" %}selected {% endif %}>Intro</option>
+		</select>
+
+		<!-- sticky bottom -->
+		<div id="sticky">
+			<div class="g3">
+				<input type="submit" name="submit" value="Opslaan" class="subm">
+				{% if article.id !="" %}
+				<a href="{{ baseURL }}/cms/{{ tb }}/{{ article.id }}/delete" class="del">of verwijder</a>
+				{% endif %}
+			</div>
+			<div class="g3 last">
 
 
-		{% if
-		( cnt.0.tb != 'site_fct' ) and ( tb != 'site_fct' ) and
-		( cnt.0.tb != 'site_clt' ) and ( tb != 'site_clt' ) and
-		( cnt.0.tb != 'site_csp' ) and ( tb != 'site_csp' )
-		%}
-		{% if cnt.0.txt.id !="" %}
-		<div class="pub">
-			<a href="{{ baseURL }}/cms/{{ path.2 }}/{{ cnt.0.txt.id }}/{{ cnt.0.txt.utt }}/concept" class="con {% if cnt.0.txt.pub == '0' %} sel {% endif %}">Concept</a>
-			<a href="{{ baseURL }}/cms/{{ path.2 }}/{{ cnt.0.txt.id }}/{{ cnt.0.txt.utt }}/public" class="pub {% if cnt.0.txt.pub == '1' %} sel {% endif %} last">Public</a>
-		</div>
-		{% endif %}
-		{% endif %}
-		{% if ( cnt.0.tb == 'site_fct' ) or ( tb =='site_fct' )  %}
-		<div class="hp" style="display:block; float:right">
-			<a href="{{ baseURL }}/public/lib/fct.php?id={{ cnt.0.txt.id }}" class="btn" target="_blank" style="float:right;margin-top:9px;padding:8px 18px 7px 18px">Toon PDF</a>
-		</div>
-		{% endif %}
-		{% if ( cnt.0.tb == 'site_csp' ) or tb == ( 'site_csp' )  %}
-		<div class="hp" style="display:block; float:right">
-			<a href="{{ baseURL }}/public/lib/csp.php?id={{ cnt.0.txt.id }}" class="btn" target="_blank" style="float:right;margin-top:9px;padding:8px 18px 7px 18px">Toon PDF</a>
-		</div>
-		{% endif %}
-		<input type="text" name="dat" value="{{ cnt.0.txt.dat|date("m-d-Y") }}" placeholder="Date">
-		{% if ( cnt.0.tb != 'site_fct' ) and ( tb !='site_fct' ) %}
-		{% endif %}
 
-		{% if ( cnt.0.tb == 'articles' ) %}
-		<a href="{{ baseURL }}/artikel/{{ cnt.0.txt.id }}/{{ cnt.0.txt.utt }}" style="float:right" target="_blank">Toon artikel</a>
-		{% endif %}
-	</div>
-</div>
-</form>
-<pre>
-	<div id="info">Waiting for update</div>
-</pre>
-<form action="process-sortable.php" method="post" name="sortables">
-	<input type="hidden" name="test-log" id="test-log" />
-</form>
-{% if ( cnt.0.tb == 'articles' ) %}
-<div class="box">
-	<h2>Afbeeldingen en bestanden</h2>
-	<form id="upload" method="post" action="{{ baseURL }}/cms/upload" enctype="multipart/form-data">
-		<input type="text" name="pid" class="pid hidden" value="{{ cnt.0.txt.id }}">
-		<table>
-			<thead>
-				<tr>
-					<td class="g1">Volgorde</td>
-					<td class="g2">Afbeelding</td>
-					<td class="g2">Bestandsnaam</td>
-					<td class="g1 last">&nbsp;</td>
-				</tr>
-			</thead>
-			<tbody  class="images">
-				<!-- The file uploads will be shown here -->
-			</tbody>
-		</table>
-		<div id="drop" class="drop">
-			<a>+ Selecteer bestand(en)</a>
-			<input type="file" name="upl" multiple />
+				{% if article.id !="" %}
+				<div class="pub">
+					<a href="{{ baseURL }}/cms/{{ path.2 }}/{{ article.id }}/{{ article.utt }}/concept" class="con {% if article.pub == '0' %} sel {% endif %}">Concept</a>
+					<a href="{{ baseURL }}/cms/{{ path.2 }}/{{ article.id }}/{{ article.utt }}/public" class="pub {% if article.pub == '1' %} sel {% endif %} last">Public</a>
+				</div>
+
+				{% endif %}
+				<input type="text" name="dat" value="{{ article.dat|date("m-d-Y") }}" placeholder="Date">
+				{% if ( tb == 'articles' ) %}
+				<a href="{{ baseURL }}/artikel/{{ article.id }}/{{ article.utt }}" style="float:right" target="_blank">Toon artikel</a>
+				{% endif %}
+			</div>
 		</div>
 	</form>
+
+		<!-- Images / files -->
+		<pre>
+			<div id="info">Waiting for update</div>
+		</pre>
+		<form action="process-sortable.php" method="post" name="sortables">
+			<input type="hidden" name="test-log" id="test-log" />
+		</form>
+		{% if ( tb == 'articles' ) %}
+		<div class="box">
+			<h2>Afbeeldingen en bestanden</h2>
+			<form id="upload" method="post" action="{{ baseURL }}/cms/upload" enctype="multipart/form-data">
+				<input type="text" name="pid" class="pid hidden" value="{{ article.id }}">
+				<table>
+					<thead>
+						<tr>
+							<td class="g1">Volgorde</td>
+							<td class="g2">Afbeelding</td>
+							<td class="g2">Bestandsnaam</td>
+							<td class="g1 last">&nbsp;</td>
+						</tr>
+					</thead>
+					<tbody  class="images">
+						<!-- The file uploads will be shown here -->
+					</tbody>
+				</table>
+				<div id="drop" class="drop">
+					<a>+ Selecteer bestand(en)</a>
+					<input type="file" name="upl" multiple />
+				</div>
+			</form>
+		</div>
+		{% endif %}
+
 </div>
-{% endif %}
-</div>
+
+<!-- push (for sticky footer) -->
 <div class="push">&nbsp;</div>
+
+</div>
 {% endblock %}

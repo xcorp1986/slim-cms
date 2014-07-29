@@ -2,10 +2,6 @@
 
 {% block content %}
 
-
-
-
-
 {% if notf %}
 <div class="g6">
 	<div class="notification">
@@ -14,47 +10,41 @@
 </div>
 {% endif %}
 
-			<div class="item" id="profile">
-			
-			
-				<h1>Wachtwoord wijzigen</h1>
-				<form enctype="multipart/form-data" action="{{ baseURL }}/cms/psw" method="post" name="main">
-					<div class="g2">
-						<input type="text" name="usr" class="usr hidden" value="{{ usr.0.nam }}">
-						<h2>{{ usr.0.nam }}</h2>
-					</div>
-					<div class="g2">
-						<input type="text" name="psw" class="psw" placeholder="nieuw wachtwoord">
-					</div>
-					<div class="g2 last">
-						<input type="submit" name="submit" value="Opslaan" class="subm">
-					</div>
-				</form>
-			
-			
-			
-				<form enctype="multipart/form-data" action="{{ baseURL }}/cms/save" method="post" name="main">
-							  {% for cnt_row in cnt %}
+<div class="item" id="settings">
+	<h1>Profiel</h1>
+	<form enctype="multipart/form-data" action="{{ baseURL }}/cms/profile/save" method="post" name="main">
+		<hr>
+		<input type="text" name="tb" value="settings" autofocus="autofocus" class="hidden">
 
-					<div class="fields">
-						<input type="text" name="id" class="id" value="{{ cnt_row.txt.id }}">
-						<input type="text" name="tb" class="tb" value="{{ cnt_row.txt.tb }}">
-						<input type="text" name="typ" class="typ" value="{{ cnt_row.txt.typ }}">
-						<input type="text" name="tit" class="tit" value="{{ cnt_row.txt.tit }}">
-						<input type="text" name="utt" class="utt" value="{{ cnt_row.txt.utt }}">
-						<div class="g2">
-							<h2>{{ cnt_row.txt.tit }}</h2>
-						</div>
-						<div class="g2">					
-							<input type="text" name="txt" class="txt" value="{{ cnt_row.txt.txt }}" placeholder="Text">
-						</div>
-						<div class="g2 last">
-							<input type="submit" name="submit" value="Opslaan" class="subm">
-						</div>
-					</div>
-			  {% endfor %}
-				</form>
+		<!-- Username -->
+		<div class="g1" style="clear:left">
+			<h2><label for="tit">Gebruikersnaam</label></h2>
+		</div>
+		{{ user.0.nam }}
+		<div class="g2">
+			<input type="text" name="username" value="{{ user.nam }}" placeholder="">
+		</div>
+		<hr>
 
+		<!-- Set new password -->
+		<div class="g1" style="clear:left">
+			<h2><label for="tit">Wijzig wachtwoord</label></h2>
+		</div>
+		<div class="g2">
+			<input type="password" name="password" value="{{ user.psw }}" placeholder="">
+		</div>
+		<hr>
+
+		<!-- sticky bottom -->
+		<div id="sticky">
+			<div class="g6 last">
+				<input type="submit" name="submit" value="Opslaan" class="subm">
 			</div>
+		</div>
+
+	</form>
+</div>
+<div class="push">&nbsp;</div>
 
 {% endblock %}
+

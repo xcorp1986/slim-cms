@@ -24,13 +24,13 @@
   <header>
    <div>
     <ul>
-     <li><a href="{{ baseURL }}/" target="_blank">{{ stt.tit }}</a></li>
+     <li><a href="{{ baseURL }}/" target="_blank">{{ settings.tit }}</a></li>
    </ul>
  </div>
  {% if(loggedout!="true") %}
  <nav>
   <ul>
-   <li><a href="{{ baseURL }}/cms" class="{% if(path.2=="")  %}sel{% endif %}">Pagina's</a></li>
+   <li><a href="{{ baseURL }}/cms" class="{% if(path.2=="")  %}sel{% endif %}">Artikelen</a></li>
    <li><a href="{{ baseURL }}/cms/settings" class="{% if(path.2=="settings")  %}sel{% endif %}">Instellingen</a></li>
  </ul>
 </nav>
