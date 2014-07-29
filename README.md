@@ -8,5 +8,5 @@ I'm building it in the first place for my own projects and it's still messy, but
 
 1. Download files or clone this Github repo.
 2. Ensure that the content folder permissions are set to 0777.
-3. Navigate to: YOURWEBSITE.COM/admin/installer and fill in required information
+3. Navigate to: yoursite.com/cms and fill in required information
 
