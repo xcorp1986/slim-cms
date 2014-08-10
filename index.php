@@ -237,18 +237,17 @@ $app->post('/cms/profile/save', $checkUser, function () use ($app)
 /**
 * get images (for page)
 */
-$app->get('/cms/:typ/:id/imgs', $checkUser, function ($typ,$id) use ($app) {
+$app->get('/cms/:tb/:id/imgs', $checkUser, function ($tb,$id) use ($app) {
+	//echo "get imgs".$id;
 	$dbh = getDb();
-	$sth = $dbh->prepare('SELECT * from articles WHERE id=? ORDER BY seq DESC');
+	$sth = $dbh->prepare("SELECT * from $tb WHERE id=? ORDER BY seq DESC");
 	$sth->execute(array($id));
-	$rows = $sth->fetchAll(PDO::FETCH_ASSOC);
-	foreach($rows as $row) {
-		$id = $row["id"];
-		$img = imgs($id,$typ);
-		$img = array('img'=>$img);
-		if($data[] = array('txt'=>$row, 'img'=>$img));
-	}
-	$app->render('cms/imgs.html', array('cnt' => $data, 'typ'=>$typ ));
+	$row = $sth->fetch(PDO::FETCH_ASSOC);
+	$id = $row['id'];
+	$utt = $row['utt'];
+	$images = imgs($id,$tb);
+	var_dump($images);
+	$app->render('cms/imgs.html', array("id" => $row['id'], "utt"=>$row['utt'], "tb"=>$tb, "images" => $images));
 });
 
 /**
@@ -262,19 +261,21 @@ $app->post('/cms/upload', function () use ($app) {
 			echo '{"status":"error"}';
 			exit;
 		}
+		$tb = $_POST['tb'];
+
 		$pid = $_POST['pid'];
 		$fnm = $_FILES['upl']['name'];
-		$path = "content/i_".anum($pid)."/";
+		$path = "content/".$tb."/i_".anum($pid)."/";
 		if (!is_dir($path."/")){
-			mkdir("content/"."i_".anum($pid), 0755);
+			mkdir("content/".$tb."/i_".anum($pid), 0755);
 		}
 		$dbh = getDb();
 		$sth = $dbh->prepare('SELECT MAX(seq) as mSeq FROM images WHERE pid=?');
 		$sth->execute(array($pid));
 		$test = $sth->fetch(PDO::FETCH_ASSOC);
 		$seq = $test['mSeq']+1;
-		$sth = $dbh->prepare('INSERT INTO images SET pid=?, pub=1, typ="cnt", fnm=?, seq=?');
-		$sth->execute(array($pid,$fnm,$seq));
+		$sth = $dbh->prepare('INSERT INTO images SET pid=?, pub=1, tb=?, fnm=?, seq=?');
+		$sth->execute(array($pid,$tb,$fnm,$seq));
 		move_uploaded_file($_FILES["upl"]["tmp_name"],$path . $fnm);
 		$thu = thu($path, $fnm);
 		echo '{"status":"success"}';
