@@ -22,7 +22,7 @@
 				<td>
 					<a href="{{ baseURL }}/cms/{{ tb }}/{{article.id }}/{{ article.utt }}">
 						<strong class="pub">
-							{{ article.tit|e }}
+							{% if article.tit != "" %}{{ article.tit|e }}{% else %}...{% endif %}
 						</strong>
 					</a>
 				</td>

@@ -46,6 +46,30 @@
 				<a data-wysihtml5-command="insertUnorderedList"><i class="fa fa-list-ul"></i></a>
 				<a data-wysihtml5-command="insertOrderedList" class="last"><i class="fa fa-list-ol"></i></a>
 			</div>
+<<<<<<< HEAD
+=======
+
+			<!-- textarea -->
+			<textarea id="textarea" class="textarea" onkeyup="textAreaAdjust(this)" placeholder="Enter text ..." name="txt" style="height:300px !important">{{ article.txt }}</textarea>
+
+			<!-- type -->
+			{{ article.typ }}
+			<select name="typ">
+				<option value="" {% if article.typ == "" %}selected {% endif %}>Artikel-type...</option>
+				<option value="news" {% if article.typ == "news" %}selected {% endif %}>Nieuws</option>
+				<option value="intro" {% if article.typ == "intro" %}selected {% endif %}>Intro</option>
+			</select>
+
+			<!-- sticky bottom -->
+			<div id="sticky">
+				<div class="g3">
+					<input type="submit" name="submit" value="Opslaan" class="subm">
+					{% if article.id !="" %}
+					<a href="{{ baseURL }}/cms/{{ tb }}/{{ article.id }}/delete" class="del">of verwijder</a>
+					{% endif %}
+				</div>
+				<div class="g3 last">
+>>>>>>> FETCH_HEAD
 
 			<!-- textarea -->
 			<textarea id="textarea" class="textarea" onkeyup="textAreaAdjust(this)" placeholder="Enter text ..." name="txt" style="height:300px !important">{{ article.txt }}</textarea>
@@ -75,6 +99,7 @@
 						<a href="{{ baseURL }}/cms/{{ path.2 }}/{{ article.id }}/{{ article.utt }}/public" class="pub {% if article.pub == '1' %} sel {% endif %} last">Public</a>
 					</div>
 
+<<<<<<< HEAD
 					{% endif %}
 					<input type="text" name="dat" value="{{ article.dat|date("m-d-Y") }}" placeholder="Date">
 					<a href="{{ baseURL }}/artikel/{{ article.id }}/{{ article.utt }}" style="float:right" target="_blank">Toon artikel</a>
@@ -82,6 +107,22 @@
 			</div>
 		</form>
 
+=======
+					{% if article.id !="" %}
+					<div class="pub">
+						<a href="{{ baseURL }}/cms/{{ path.2 }}/{{ article.id }}/{{ article.utt }}/concept" class="con {% if article.pub == '0' %} sel {% endif %}">Concept</a>
+						<a href="{{ baseURL }}/cms/{{ path.2 }}/{{ article.id }}/{{ article.utt }}/public" class="pub {% if article.pub == '1' %} sel {% endif %} last">Public</a>
+					</div>
+
+					{% endif %}
+					<input type="text" name="dat" value="{{ article.dat|date("m-d-Y") }}" placeholder="Date">
+					{% if ( tb == 'articles' ) %}
+					<a href="{{ baseURL }}/artikel/{{ article.id }}/{{ article.utt }}" style="float:right" target="_blank">Toon artikel</a>
+					{% endif %}
+				</div>
+			</div>
+		</form>
+>>>>>>> FETCH_HEAD
 
 		<!-- Images / files -->
 		<pre>
@@ -116,6 +157,10 @@
 		</div>
 
 	</div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> FETCH_HEAD
 
 	<!-- push (for sticky footer) -->
 	<div class="push">&nbsp;</div>

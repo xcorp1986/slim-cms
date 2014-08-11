@@ -5,6 +5,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
 <head>
     <meta charset="utf-8">
+<<<<<<< HEAD
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>{{ settings.tit }}</title>
     <meta name="description" content="">
@@ -15,12 +16,24 @@
     <link rel="stylesheet" href="{{ baseURL }}/public/css/main.css">
 
     <script src="js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+=======
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="{{ baseURL }}/public/css/normalize.css">
+    <link rel="stylesheet" href="{{ baseURL }}/public/css/grid.css">
+    <link rel="stylesheet" href="{{ baseURL }}/public/css/main.css">
+    <script src="{{ baseURL }}/public/js/vendor/modernizr-2.6.2.min.js"></script>
+>>>>>>> FETCH_HEAD
 </head>
 <body>
         <!--[if lt IE 7]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
             <![endif]-->
 
+<<<<<<< HEAD
 
 
 
@@ -133,6 +146,37 @@
             <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.0.min.js"><\/script>')</script>
 
             <script src="js/main.js"></script>
+=======
+            <header class="grid">
+                <div class="col-1-4">
+                    SlimCMS front-end
+                </div>
+                <nav class="col-3-4">
+                    <ul>
+                        <li>list-item 1</li>
+                        <li>list-item 2</li>
+                    </ul>
+                </nav>
+            </header>
+            <div class="container grid">
+                <article class="col-3-4">
+                    <p>Content</p>
+                </article>
+                <aside class="col-1-4">
+                    <p>side</p>
+                </aside>
+            </div>
+            <footer class="grid">
+            <div class="col-1">
+                    footer
+                </div>
+            </footer>
+
+            <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+            <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
+            <script src="{{ baseURL }}/public/js/plugins.js"></script>
+            <script src="{{ baseURL }}/public/js/main.js"></script>
+>>>>>>> FETCH_HEAD
 
             <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
             <script>

@@ -41,7 +41,10 @@ session_start();
 * View home
 */
 $app->get('/', function () use ($app) {
+<<<<<<< HEAD
 	echo "Ketner Olsen";
+=======
+>>>>>>> FETCH_HEAD
 	$app->render('base.twig',array());
 });
 
@@ -288,6 +291,7 @@ $app->get('/cms/:tb/:id/imgs', $checkUser, function ($tb,$id) use ($app) {
 	$sth = $dbh->prepare("SELECT * from $tb WHERE id=? ORDER BY seq DESC");
 	$sth->execute(array($id));
 	$row = $sth->fetch(PDO::FETCH_ASSOC);
+<<<<<<< HEAD
 
 
 	$id = $row['id'];
@@ -297,6 +301,12 @@ $app->get('/cms/:tb/:id/imgs', $checkUser, function ($tb,$id) use ($app) {
 
 	//var_dump($images);
 
+=======
+	$id = $row['id'];
+	$utt = $row['utt'];
+	$images = imgs($id,$tb);
+	var_dump($images);
+>>>>>>> FETCH_HEAD
 	$app->render('cms/imgs.html', array("id" => $row['id'], "utt"=>$row['utt'], "tb"=>$tb, "images" => $images));
 });
 
