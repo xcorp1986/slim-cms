@@ -50,15 +50,6 @@
 			<!-- textarea -->
 			<textarea id="textarea" class="textarea" onkeyup="textAreaAdjust(this)" placeholder="Enter text ..." name="txt" style="height:300px !important">{{ article.txt }}</textarea>
 
-			<!-- type -->
-			<select name="typ">
-				<option value="" {% if article.typ == "" %}selected {% endif %}>Artikel-type...</option>
-				<option value="Intro" {% if article.typ == "Intro" %}selected {% endif %}>Intro</option>
-				<option value="Co-creatie" {% if article.typ == "Co-creatie" %}selected {% endif %}>Co-creatie</option>
-				<option value="Gebruiker Centraal" {% if article.typ == "Gebruiker Centraal" %}selected {% endif %}>Gebruiker Centraal</option>
-				<option value="Verbinden" {% if article.typ == "Verbinden" %}selected {% endif %}>Verbinden</option>
-			</select>
-
 			<!-- sticky bottom -->
 			<div id="sticky">
 				<div class="g3">
@@ -77,13 +68,16 @@
 
 					{% endif %}
 					<input type="text" name="dat" value="{{ article.dat|date("m-d-Y") }}" placeholder="Date">
+					{% if ( tb == 'articles' ) %}
 					<a href="{{ baseURL }}/artikel/{{ article.id }}/{{ article.utt }}" style="float:right" target="_blank">Toon artikel</a>
+					{% endif %}
 				</div>
 			</div>
 		</form>
 
 
 		<!-- Images / files -->
+
 		<pre>
 			<div id="info">Waiting for update</div>
 		</pre>
@@ -114,7 +108,6 @@
 				</div>
 			</form>
 		</div>
-
 	</div>
 
 	<!-- push (for sticky footer) -->

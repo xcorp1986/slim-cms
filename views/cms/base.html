@@ -30,7 +30,11 @@
  {% if(loggedout!="true") %}
  <nav>
   <ul>
-   <li><a href="{{ baseURL }}/cms" class="{% if(path.2=="")  %}sel{% endif %}">Artikelen</a></li>
+   <li><a href="{{ baseURL }}/cms" class="{% if(path.2=="")  %}sel{% endif %}">Visie</a></li>
+   <li><a href="{{ baseURL }}/cms/projecten" class="{% if(path.2=="projecten")  %}sel{% endif %}">Projecten</a></li>
+   <li><a href="{{ baseURL }}/cms/nieuws" class="{% if(path.2=="nieuws")  %}sel{% endif %}">Nieuws</a></li>
+   <li><a href="{{ baseURL }}/cms/studio" class="{% if(path.2=="studio")  %}sel{% endif %}">Studio</a></li>
+
    <li><a href="{{ baseURL }}/cms/settings" class="{% if(path.2=="settings")  %}sel{% endif %}">Instellingen</a></li>
  </ul>
 </nav>

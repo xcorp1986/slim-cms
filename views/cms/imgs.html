@@ -1,14 +1,14 @@
-{% for imgs in cnt.0.img.img %}
-<tr id="{{ imgs.id }}">
+{% for image in images %}
+<tr id="{{ image.id }}">
 	<td class="g1">
 		<div class="handle">=</div>
 	</td>
 	<td class="g2">
-		<img src="{{ imgs.img }}">
+		<img src="{{ image.path }}">
 	</td>
-	<td class="g2">{{ imgs.fnm }}</td>
+	<td class="g2">{{ image.fnm }}</td>
 	<td class="g1 last">
-		<a href="{{ baseURL }}/cms/{{ typ }}/{{ cnt.0.txt.id }}/{{ cnt.0.txt.utt }}/img/delete/{{ imgs.fnm }}" class="btn del">&times;</a>
+		<a href="{{ baseURL }}/cms/{{ tb }}/{{ id }}/{{ utt }}/img/delete/{{ image.id }}" class="btn del">&times;</a>
 	</td>
 </tr>
 {% endfor %}

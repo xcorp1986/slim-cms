@@ -57,7 +57,7 @@ $('#upload').fileupload({
   add: function (e, data) {
     e.preventDefault();
     var tpl = $('<tr class="working"><td class="msg"></td><td><input type="text" value="0" data-width="48" data-height="48"'+
-    ' data-fgColor="#0788a5" data-readOnly="1" data-bgColor="#3e4043" /></td><td class="name"></td><td class="size"></td></tr>');
+      ' data-fgColor="#0788a5" data-readOnly="1" data-bgColor="#3e4043" /></td><td class="name"></td><td class="size"></td></tr>');
     // Append the file name and file size
     tpl.find('td.size').text(formatFileSize(data.files[0].size));
     //append name
@@ -86,20 +86,24 @@ $('#upload').fileupload({
       }
       var json = JSON.parse(result);
       var status = json['status'];
+
       if(status == 'error'){
         tpl.find('td.msg').text("Fout");
         data.context.addClass('error');
         data.context.delay(2000).fadeOut('slow');
         return;
+      } else {
+          console.log("refresh image list");
+        getImages();
+
       }
       // refresh image list
-      getImages();
       setTimeout(function(){
         //data.context.delay(2000).fadeOut('slow');
       },3000);
     });
-  },
-  progress: function(e, data){
+},
+progress: function(e, data){
     // Calculate the completion percentage of the upload
     var progress = parseInt(data.loaded / data.total * 100, 10);
     // Update the hidden input field and trigger a change

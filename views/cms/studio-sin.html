@@ -54,9 +54,8 @@
 			<select name="typ">
 				<option value="" {% if article.typ == "" %}selected {% endif %}>Artikel-type...</option>
 				<option value="Intro" {% if article.typ == "Intro" %}selected {% endif %}>Intro</option>
-				<option value="Co-creatie" {% if article.typ == "Co-creatie" %}selected {% endif %}>Co-creatie</option>
-				<option value="Gebruiker Centraal" {% if article.typ == "Gebruiker Centraal" %}selected {% endif %}>Gebruiker Centraal</option>
-				<option value="Verbinden" {% if article.typ == "Verbinden" %}selected {% endif %}>Verbinden</option>
+				<option value="Ketner Olsen is ook" {% if article.typ == "Ketner Olsen is ook" %}selected {% endif %}>Ketner Olsen is ook</option>
+				<option value="Locatie" {% if article.typ == "Locatie" %}selected {% endif %}>Locatie</option>
 			</select>
 
 			<!-- sticky bottom -->
@@ -77,13 +76,15 @@
 
 					{% endif %}
 					<input type="text" name="dat" value="{{ article.dat|date("m-d-Y") }}" placeholder="Date">
+					{% if ( tb == 'articles' ) %}
 					<a href="{{ baseURL }}/artikel/{{ article.id }}/{{ article.utt }}" style="float:right" target="_blank">Toon artikel</a>
+					{% endif %}
 				</div>
 			</div>
 		</form>
 
-
 		<!-- Images / files -->
+
 		<pre>
 			<div id="info">Waiting for update</div>
 		</pre>
@@ -114,6 +115,7 @@
 				</div>
 			</form>
 		</div>
+
 
 	</div>
 

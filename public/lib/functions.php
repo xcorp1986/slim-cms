@@ -78,18 +78,18 @@ function thumbs($pid,$typ) {
 	return $imgs;
 }
 
-function imgs($pid,$typ="cnt") {
+function imgs($pid,$tb="cnt") {
 	$dbh = getDb();
-	$sth = $dbh->prepare("SELECT typ, fnm, id from images WHERE pid=? AND typ=? ORDER BY seq ASC");
-	$sth->execute(array($pid,$typ));
+	$sth = $dbh->prepare("SELECT tb, fnm, id from images WHERE pid=? AND tb=? ORDER BY seq ASC");
+	$sth->execute(array($pid,$tb));
 	$rows = $sth->fetchAll(PDO::FETCH_ASSOC);
 	$baseUrl = getBaseUrl();
 	$imgs = "";
 	foreach($rows as $row) {
-		$typ = $row["typ"];
+		$tb = $row["tb"];
 		$fnm = $row["fnm"];
 		$id = $row["id"];
-		$imgs[] = array('img'=>$baseUrl."/content/i_".a_num($pid)."/$fnm",'fnm'=>$fnm,'id'=>$id);
+		$imgs[] = array('path'=>$baseUrl."/content/".$tb."/i_".a_num($pid)."/$fnm",'fnm'=>$fnm,'id'=>$id);
 	}
 	return $imgs;
 }

@@ -11,7 +11,7 @@ $app = new \Slim\Slim(array(
 	'debug' => true,
 	'view' => new \Slim\Views\Twig(),
 	'templates.path' => 'views/',
-));
+	));
 /**
  * Slim before hook
  */
@@ -41,8 +41,8 @@ session_start();
 * View home
 */
 $app->get('/', function () use ($app) {
-	echo "Slim Front-end";
-	echo getBaseUrl();
+	echo "Ketner Olsen";
+	$app->render('base.twig',array());
 });
 
 
@@ -167,15 +167,60 @@ $app->post('/cms/installer-process-db', function () use ($app) {
 /**
 * Clients list view
 */
-$app->get('/cms(:/articles)', $checkUser, function () use ($app) {
+$app->get('/cms(/visie)', $checkUser, function () use ($app) {
 
 	$dbh = getDb();
-	$sth = $dbh->prepare("SELECT * from articles ORDER BY id DESC");
+	$sth = $dbh->prepare("SELECT * from visie ORDER BY id DESC");
 	$sth->execute();
 	$rows = $sth->fetchAll(PDO::FETCH_ASSOC);
 	$sth->execute();
 
-	$app->render('cms/articles.html', array('tb'=>'articles', 'articles' => $rows));
+	$app->render('cms/visie.html', array('tb'=>'visie', 'articles' => $rows));
+
+});
+
+/**
+* Projecten list view
+*/
+$app->get('/cms/projecten', $checkUser, function () use ($app) {
+
+	$dbh = getDb();
+	$sth = $dbh->prepare("SELECT * from projecten ORDER BY id DESC");
+	$sth->execute();
+	$rows = $sth->fetchAll(PDO::FETCH_ASSOC);
+	$sth->execute();
+
+	$app->render('cms/projecten.html', array('tb'=>'projecten', 'articles' => $rows));
+
+});
+
+/**
+* Nieuws list view
+*/
+$app->get('/cms/nieuws', $checkUser, function () use ($app) {
+
+	$dbh = getDb();
+	$sth = $dbh->prepare("SELECT * from nieuws ORDER BY id DESC");
+	$sth->execute();
+	$rows = $sth->fetchAll(PDO::FETCH_ASSOC);
+	$sth->execute();
+
+	$app->render('cms/nieuws.html', array('tb'=>'nieuws', 'articles' => $rows));
+
+});
+
+/**
+* Projecten list view
+*/
+$app->get('/cms/studio', $checkUser, function () use ($app) {
+
+	$dbh = getDb();
+	$sth = $dbh->prepare("SELECT * from studio ORDER BY id DESC");
+	$sth->execute();
+	$rows = $sth->fetchAll(PDO::FETCH_ASSOC);
+	$sth->execute();
+
+	$app->render('cms/studio.html', array('tb'=>'studio', 'articles' => $rows));
 
 });
 
@@ -198,7 +243,7 @@ $app->get('/cms/settings', $checkUser, function () use ($app) {
 $app->get('/cms/profile(/:notf)', $checkUser, function ($notf=NULL) use ($app)
 {
 	if
-	($notf=="changed")
+		($notf=="changed")
 	{
 		$notf = "Het wachtwoord is gewijzigd";
 	} else
@@ -237,18 +282,22 @@ $app->post('/cms/profile/save', $checkUser, function () use ($app)
 /**
 * get images (for page)
 */
-$app->get('/cms/:typ/:id/imgs', $checkUser, function ($typ,$id) use ($app) {
+$app->get('/cms/:tb/:id/imgs', $checkUser, function ($tb,$id) use ($app) {
+	//echo "get imgs".$id;
 	$dbh = getDb();
-	$sth = $dbh->prepare('SELECT * from articles WHERE id=? ORDER BY seq DESC');
+	$sth = $dbh->prepare("SELECT * from $tb WHERE id=? ORDER BY seq DESC");
 	$sth->execute(array($id));
-	$rows = $sth->fetchAll(PDO::FETCH_ASSOC);
-	foreach($rows as $row) {
-		$id = $row["id"];
-		$img = imgs($id,$typ);
-		$img = array('img'=>$img);
-		if($data[] = array('txt'=>$row, 'img'=>$img));
-	}
-	$app->render('cms/imgs.html', array('cnt' => $data, 'typ'=>$typ ));
+	$row = $sth->fetch(PDO::FETCH_ASSOC);
+
+
+	$id = $row['id'];
+	$utt = $row['utt'];
+//echo "id: ".$id;
+	$images = imgs($id,$tb);
+
+	//var_dump($images);
+
+	$app->render('cms/imgs.html', array("id" => $row['id'], "utt"=>$row['utt'], "tb"=>$tb, "images" => $images));
 });
 
 /**
@@ -262,22 +311,27 @@ $app->post('/cms/upload', function () use ($app) {
 			echo '{"status":"error"}';
 			exit;
 		}
+		$tb = $_POST['tb'];
+
 		$pid = $_POST['pid'];
 		$fnm = $_FILES['upl']['name'];
-		$path = "content/i_".anum($pid)."/";
+		$path = "content/".$tb."/i_".anum($pid)."/";
 		if (!is_dir($path."/")){
-			mkdir("content/"."i_".anum($pid), 0755);
+			mkdir("content/".$tb."/i_".anum($pid), 0755);
 		}
 		$dbh = getDb();
 		$sth = $dbh->prepare('SELECT MAX(seq) as mSeq FROM images WHERE pid=?');
 		$sth->execute(array($pid));
 		$test = $sth->fetch(PDO::FETCH_ASSOC);
 		$seq = $test['mSeq']+1;
-		$sth = $dbh->prepare('INSERT INTO images SET pid=?, pub=1, typ="cnt", fnm=?, seq=?');
-		$sth->execute(array($pid,$fnm,$seq));
+		$sth = $dbh->prepare('INSERT INTO images SET pid=?, pub=1, tb=?, fnm=?, seq=?');
+		$sth->execute(array($pid,$tb,$fnm,$seq));
 		move_uploaded_file($_FILES["upl"]["tmp_name"],$path . $fnm);
 		$thu = thu($path, $fnm);
 		echo '{"status":"success"}';
+		//$baseUrl = getBaseUrl();
+			//$app->redirect($baseUrl.'/cms/'.$tb.'/'.$pid.'/imgs');
+
 		exit;
 	}
 	echo '{"status":"error"}';
@@ -287,17 +341,23 @@ $app->post('/cms/upload', function () use ($app) {
 /**
 * delete images
 */
-$app->get('/cms/:typ/:id/:utt/img/delete/:fnm', $checkUser, function ($typ,$id,$utt="",$fnm) use ($app) {
-	$pid = $id;
+$app->get('/cms/:tb/:pid/:utt/img/delete/:id', $checkUser, function ($tb,$pid,$utt,$id) use ($app) {
 	$dbh = getDb();
-	$sth = $dbh->prepare('DELETE from images WHERE fnm=?');
-	$sth->execute(array($fnm));
-	$path = "../content/i_".anum($pid)."/";
+	$sth = $dbh->prepare('SELECT fnm FROM images WHERE id=?');
+	$sth->execute(array($id));
+	$row = $sth->fetch(PDO::FETCH_ASSOC);
+	$fnm = $row['fnm'];
+
+	var_dump($row['fnm']);
+	echo $row['fnm'];
+	$sth = $dbh->prepare('DELETE from images WHERE id=?');
+	$sth->execute(array($id));
+	$path = "../content/".$tb."/i_".anum($pid)."/";
 	if ($fnm && file_exists("$path/$fnm")){
 		while (!unlink("$path/$fnm"));
 	}
 	$baseUrl = getBaseUrl();
-	$app->redirect($baseUrl.'/cms/'.$typ.'/'.$id.'/'.$utt);
+	$app->redirect($baseUrl.'/cms/'.$tb.'/'.$pid.'/'.$utt);
 });
 
 /**
@@ -363,7 +423,7 @@ $app->get('/cms/:tb/:id/delete', $checkUser, function ($tb,$id) use ($app) {
 	$sth = $dbh->prepare("DELETE from $tb WHERE id=?");
 	$sth->execute(array($id));
 	$baseUrl = getBaseUrl();
-	$rdr = $baseUrl.'/cms';
+	$rdr = $baseUrl.'/cms/'.$tb;
 	$app->redirect($rdr);
 });
 
@@ -386,20 +446,57 @@ $app->get('/cms/new/:tb', $checkUser, function ($tb) use ($app) {
 	$app->redirect($rdr);
 })->name('cms');
 
-
 /**
-* View article
+* View visie
 */
-$app->get('/cms/:typ/:id(/:utt)', $checkUser, function ($typ,$id,$utt="") use ($app) {
+$app->get('/cms/visie/:id(/:utt)', $checkUser, function ($id,$utt="") use ($app) {
 	$dbh = getDb();
-	$tb = getUrlTyp($typ);
-	$sth = $dbh->prepare("SELECT * from articles WHERE id=? ORDER BY dat DESC LIMIT 1");
+	$tb = "visie";
+	$sth = $dbh->prepare("SELECT * from visie WHERE id=? ORDER BY dat DESC LIMIT 1");
 	$sth->execute(array($id));
 	$article = $sth->fetch(PDO::FETCH_ASSOC);
 
 	$app->render('cms/sin.html', array('article' => $article, 'tb'=> $tb));
 })->name('cms');
 
+/**
+* View project
+*/
+$app->get('/cms/projecten/:id(/:utt)', $checkUser, function ($id,$utt="") use ($app) {
+	$dbh = getDb();
+	$tb = "projecten";
+	$sth = $dbh->prepare("SELECT * from projecten WHERE id=? ORDER BY dat DESC LIMIT 1");
+	$sth->execute(array($id));
+	$article = $sth->fetch(PDO::FETCH_ASSOC);
+
+	$app->render('cms/project.html', array('article' => $article, 'tb'=> $tb));
+})->name('cms');
+
+/**
+* View Nieuws
+*/
+$app->get('/cms/nieuws/:id(/:utt)', $checkUser, function ($id,$utt="") use ($app) {
+	$dbh = getDb();
+	$tb = "nieuws";
+	$sth = $dbh->prepare("SELECT * from nieuws WHERE id=? ORDER BY dat DESC LIMIT 1");
+	$sth->execute(array($id));
+	$article = $sth->fetch(PDO::FETCH_ASSOC);
+
+	$app->render('cms/nieuws-sin.html', array('article' => $article, 'tb'=> $tb));
+})->name('cms');
+
+/**
+* View studio
+*/
+$app->get('/cms/studio/:id(/:utt)', $checkUser, function ($id,$utt="") use ($app) {
+	$dbh = getDb();
+	$tb = "studio";
+	$sth = $dbh->prepare("SELECT * from studio WHERE id=? ORDER BY dat DESC LIMIT 1");
+	$sth->execute(array($id));
+	$article = $sth->fetch(PDO::FETCH_ASSOC);
+
+	$app->render('cms/studio-sin.html', array('article' => $article, 'tb'=> $tb));
+})->name('cms');
 
 function add_tag($tit) {
 	$utt = utt($tit);
@@ -454,24 +551,53 @@ $app->post('/cms/save', $checkUser, function () use ($app) {
 		print_r($sth->errorInfo());
 	}
 	// save content
-	elseif ($id){
+	elseif ($tb == "visie"){
 		$dbh = getDb();
-		$sth = $dbh->prepare("UPDATE articles SET dat=?, tit=?, utt=?, txt=?, typ=?, tag=?, ytb=? WHERE id=?");
+		$sth = $dbh->prepare("UPDATE visie SET dat=?, tit=?, utt=?, txt=?, typ=?, tag=?, ytb=? WHERE id=?");
 		$sth->execute(array($dat,$tit,$utt,$txt,$typ,$tag,$ytb,$id));
 		print_r($sth->errorInfo());
 	}
+	// save content
+	elseif ($tb == "projecten"){
+		$dbh = getDb();
+		$sth = $dbh->prepare("UPDATE projecten SET dat=?, tit=?, utt=?, txt=?, typ=?, tag=?, ytb=? WHERE id=?");
+		$sth->execute(array($dat,$tit,$utt,$txt,$typ,$tag,$ytb,$id));
+		print_r($sth->errorInfo());
+	}
+	// save content
+	elseif ($tb == "nieuws"){
+		$dbh = getDb();
+		$sth = $dbh->prepare("UPDATE nieuws SET dat=?, tit=?, utt=?, txt=?, typ=?, tag=?, ytb=? WHERE id=?");
+		$sth->execute(array($dat,$tit,$utt,$txt,$typ,$tag,$ytb,$id));
+		print_r($sth->errorInfo());
+	}
+	// save content
+	elseif ($tb == "studio"){
+		$dbh = getDb();
+		$sth = $dbh->prepare("UPDATE studio SET dat=?, tit=?, utt=?, txt=?, typ=?, tag=?, ytb=? WHERE id=?");
+		$sth->execute(array($dat,$tit,$utt,$txt,$typ,$tag,$ytb,$id));
+		print_r($sth->errorInfo());
+	}
+
 	$baseUrl = getBaseUrl();
 
 	echo "tb: ".$tb;
 	if($tb=="settings") {
 		$rdr = $baseUrl.'/cms/settings';
-	} elseif($tb=="site_fct") {
-		$rdr = $baseUrl.'/cms/invoices/'.$id.'/'.$utt;
-	}elseif($tb=="site_csp") {
-		$rdr = $baseUrl.'/cms/correspondence/'.$id.'/'.$utt;
-	} elseif($tb=="site_clt") {
-		$rdr = $baseUrl.'/cms/clients/'.$id.'/'.$utt;
-	} else {
+	}
+	elseif($tb=="visie") {
+		$rdr = $baseUrl.'/cms/visie/'.$id.'/'.$utt;
+	}
+	elseif($tb=="projecten") {
+		$rdr = $baseUrl.'/cms/projecten/'.$id.'/'.$utt;
+	}
+	elseif($tb=="studio") {
+		$rdr = $baseUrl.'/cms/studio/'.$id.'/'.$utt;
+	}
+	elseif($tb=="nieuws") {
+		$rdr = $baseUrl.'/cms/nieuws/'.$id.'/'.$utt;
+	}
+	else {
 		$rdr = $baseUrl.'/cms/articles/'.$id.'/'.$utt;
 	}
 	$app->redirect($rdr);
