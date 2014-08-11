@@ -41,8 +41,7 @@ session_start();
 * View home
 */
 $app->get('/', function () use ($app) {
-	echo "Slim Front-end";
-	echo getBaseUrl();
+	$app->render('base.twig',array());
 });
 
 

@@ -32,11 +32,8 @@ function getImages() {
   path.indexOf(1);
   var typ =  path.split("/")[2];
   id = path.split("/")[3];
-  console.log("baseURL:"+baseURL);
   var url = baseURL+"/cms/"+typ+"/"+id+"/imgs";
-  console.log("URL:"+url);
   jQuery.get(url,function(data){
-    console.log("data?:"+data);
     $(".images").html(data);
   });
 }
