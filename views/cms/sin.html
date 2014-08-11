@@ -32,97 +32,58 @@
 					</li>
 				</ul>
 
-				<a data-wysihtml5-command="bold" title="CTRL+B"><i class="fa fa-bold"></i></a>
+ 				<a data-wysihtml5-command="bold" title="CTRL+B"><i class="fa fa-bold"></i></a>
 				<a data-wysihtml5-command="italic" title="CTRL+I"><i class="fa fa-italic"></i></a>
-				<a data-wysihtml5-command="createLink"><i class="fa fa-link"></i></a>
-				<div data-wysihtml5-dialog="createLink" style="display: none;">
-					<label>
-						Link:
-						<input data-wysihtml5-dialog-field="href" value="http://">
-					</label>
-					<a data-wysihtml5-dialog-action="save">OK</a>&nbsp;<a data-wysihtml5-dialog-action="cancel">Cancel</a>
-				</div>
-				<a data-wysihtml5-command="quote"><i class="fa fa-quote-left"></i></a>
-				<a data-wysihtml5-command="insertUnorderedList"><i class="fa fa-list-ul"></i></a>
-				<a data-wysihtml5-command="insertOrderedList" class="last"><i class="fa fa-list-ol"></i></a>
+						<a data-wysihtml5-command="createLink"><i class="fa fa-link"></i></a>
+			<div data-wysihtml5-dialog="createLink" style="display: none;">
+				<label>
+					Link:
+					<input data-wysihtml5-dialog-field="href" value="http://">
+				</label>
+				<a data-wysihtml5-dialog-action="save">OK</a>&nbsp;<a data-wysihtml5-dialog-action="cancel">Cancel</a>
 			</div>
-<<<<<<< HEAD
-=======
+			<a data-wysihtml5-command="quote"><i class="fa fa-quote-left"></i></a>
+			<a data-wysihtml5-command="insertUnorderedList"><i class="fa fa-list-ul"></i></a>
+			<a data-wysihtml5-command="insertOrderedList" class="last"><i class="fa fa-list-ol"></i></a>
+		</div>
 
-			<!-- textarea -->
-			<textarea id="textarea" class="textarea" onkeyup="textAreaAdjust(this)" placeholder="Enter text ..." name="txt" style="height:300px !important">{{ article.txt }}</textarea>
+		<!-- textarea -->
+		<textarea id="textarea" class="textarea" onkeyup="textAreaAdjust(this)" placeholder="Enter text ..." name="txt" style="height:300px !important">{{ article.txt }}</textarea>
 
-			<!-- type -->
-			{{ article.typ }}
-			<select name="typ">
-				<option value="" {% if article.typ == "" %}selected {% endif %}>Artikel-type...</option>
-				<option value="news" {% if article.typ == "news" %}selected {% endif %}>Nieuws</option>
-				<option value="intro" {% if article.typ == "intro" %}selected {% endif %}>Intro</option>
-			</select>
+		<!-- type -->
+		{{ article.typ }}
+		<select name="typ">
+			<option value="" {% if article.typ == "" %}selected {% endif %}>Artikel-type...</option>
+			<option value="news" {% if article.typ == "news" %}selected {% endif %}>Nieuws</option>
+			<option value="intro" {% if article.typ == "intro" %}selected {% endif %}>Intro</option>
+		</select>
 
-			<!-- sticky bottom -->
-			<div id="sticky">
-				<div class="g3">
-					<input type="submit" name="submit" value="Opslaan" class="subm">
-					{% if article.id !="" %}
-					<a href="{{ baseURL }}/cms/{{ tb }}/{{ article.id }}/delete" class="del">of verwijder</a>
-					{% endif %}
-				</div>
-				<div class="g3 last">
->>>>>>> FETCH_HEAD
-
-			<!-- textarea -->
-			<textarea id="textarea" class="textarea" onkeyup="textAreaAdjust(this)" placeholder="Enter text ..." name="txt" style="height:300px !important">{{ article.txt }}</textarea>
-
-			<!-- type -->
-			<select name="typ">
-				<option value="" {% if article.typ == "" %}selected {% endif %}>Artikel-type...</option>
-				<option value="Intro" {% if article.typ == "Intro" %}selected {% endif %}>Intro</option>
-				<option value="Co-creatie" {% if article.typ == "Co-creatie" %}selected {% endif %}>Co-creatie</option>
-				<option value="Gebruiker Centraal" {% if article.typ == "Gebruiker Centraal" %}selected {% endif %}>Gebruiker Centraal</option>
-				<option value="Verbinden" {% if article.typ == "Verbinden" %}selected {% endif %}>Verbinden</option>
-			</select>
-
-			<!-- sticky bottom -->
-			<div id="sticky">
-				<div class="g3">
-					<input type="submit" name="submit" value="Opslaan" class="subm">
-					{% if article.id !="" %}
-					<a href="{{ baseURL }}/cms/{{ tb }}/{{ article.id }}/delete" class="del">of verwijder</a>
-					{% endif %}
-				</div>
-				<div class="g3 last">
-
-					{% if article.id !="" %}
-					<div class="pub">
-						<a href="{{ baseURL }}/cms/{{ path.2 }}/{{ article.id }}/{{ article.utt }}/concept" class="con {% if article.pub == '0' %} sel {% endif %}">Concept</a>
-						<a href="{{ baseURL }}/cms/{{ path.2 }}/{{ article.id }}/{{ article.utt }}/public" class="pub {% if article.pub == '1' %} sel {% endif %} last">Public</a>
-					</div>
-
-<<<<<<< HEAD
-					{% endif %}
-					<input type="text" name="dat" value="{{ article.dat|date("m-d-Y") }}" placeholder="Date">
-					<a href="{{ baseURL }}/artikel/{{ article.id }}/{{ article.utt }}" style="float:right" target="_blank">Toon artikel</a>
-				</div>
+		<!-- sticky bottom -->
+		<div id="sticky">
+			<div class="g3">
+				<input type="submit" name="submit" value="Opslaan" class="subm">
+				{% if article.id !="" %}
+				<a href="{{ baseURL }}/cms/{{ tb }}/{{ article.id }}/delete" class="del">of verwijder</a>
+				{% endif %}
 			</div>
-		</form>
+			<div class="g3 last">
 
-=======
-					{% if article.id !="" %}
-					<div class="pub">
-						<a href="{{ baseURL }}/cms/{{ path.2 }}/{{ article.id }}/{{ article.utt }}/concept" class="con {% if article.pub == '0' %} sel {% endif %}">Concept</a>
-						<a href="{{ baseURL }}/cms/{{ path.2 }}/{{ article.id }}/{{ article.utt }}/public" class="pub {% if article.pub == '1' %} sel {% endif %} last">Public</a>
-					</div>
 
-					{% endif %}
-					<input type="text" name="dat" value="{{ article.dat|date("m-d-Y") }}" placeholder="Date">
-					{% if ( tb == 'articles' ) %}
-					<a href="{{ baseURL }}/artikel/{{ article.id }}/{{ article.utt }}" style="float:right" target="_blank">Toon artikel</a>
-					{% endif %}
+
+				{% if article.id !="" %}
+				<div class="pub">
+					<a href="{{ baseURL }}/cms/{{ path.2 }}/{{ article.id }}/{{ article.utt }}/concept" class="con {% if article.pub == '0' %} sel {% endif %}">Concept</a>
+					<a href="{{ baseURL }}/cms/{{ path.2 }}/{{ article.id }}/{{ article.utt }}/public" class="pub {% if article.pub == '1' %} sel {% endif %} last">Public</a>
 				</div>
+
+				{% endif %}
+				<input type="text" name="dat" value="{{ article.dat|date("m-d-Y") }}" placeholder="Date">
+				{% if ( tb == 'articles' ) %}
+				<a href="{{ baseURL }}/artikel/{{ article.id }}/{{ article.utt }}" style="float:right" target="_blank">Toon artikel</a>
+				{% endif %}
 			</div>
-		</form>
->>>>>>> FETCH_HEAD
+		</div>
+	</form>
 
 		<!-- Images / files -->
 		<pre>
@@ -131,11 +92,11 @@
 		<form action="process-sortable.php" method="post" name="sortables">
 			<input type="hidden" name="test-log" id="test-log" />
 		</form>
+		{% if ( tb == 'articles' ) %}
 		<div class="box">
 			<h2>Afbeeldingen en bestanden</h2>
 			<form id="upload" method="post" action="{{ baseURL }}/cms/upload" enctype="multipart/form-data">
 				<input type="text" name="pid" class="pid hidden" value="{{ article.id }}">
-				<input type="text" name="tb" class="tb hidden" value="{{ tb }}">
 				<table>
 					<thead>
 						<tr>
@@ -155,15 +116,12 @@
 				</div>
 			</form>
 		</div>
+		{% endif %}
 
-	</div>
-<<<<<<< HEAD
-=======
+</div>
 
->>>>>>> FETCH_HEAD
-
-	<!-- push (for sticky footer) -->
-	<div class="push">&nbsp;</div>
+<!-- push (for sticky footer) -->
+<div class="push">&nbsp;</div>
 
 </div>
 {% endblock %}

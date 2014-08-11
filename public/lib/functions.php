@@ -1,10 +1,7 @@
 <?php
-
-/**
- * Url title
- * @param  string $str
- * @return string
- */
+function anum($n){
+	return (($n<10)?"00$n":(($n<100)? "0$n" : $n));
+}
 function utt($str) {
     $url = str_replace("'", '', $str);
     $url = str_replace('%20', ' ', $url);
@@ -15,16 +12,19 @@ function utt($str) {
     $url = preg_replace('~[^-a-z0-9_]+~', '', $url);
     return $url;
 }
-
-/**
- * Alphabetical number
- * @param  int $n
- * @return int
- */
-function anum($n){
+// alphabetical number
+function a_num($n){
 	return (($n<100)? (($n<10)?"00$n":"0$n"): $n);
 }
-
+// cut string
+function shorten($str,$max, $rf=""){
+	if (strlen($str)>$max){
+		$c = ((strpos($str," ", $max)>0)?strpos($str," ", $max):$max);
+		return substr($str,0, $c)."...".(($rf)? "<span class=\"rf inv\"><br />$rf</span>" : "");
+	}else{
+		return $str;
+	}
+}
 /**
  * Shorthand typ to full typ for url
  * @param  [type] $typ [description]
@@ -62,12 +62,6 @@ function getUrlTyp($typ) {
 	}
 }
 
-/**
- * Thumbnails
- * @param  int $pid [description]
- * @param  [type] $typ [description]
- * @return [type]      [description]
- */
 function thumbs($pid,$typ) {
 	$dbh = getDb();
 	$sth = $dbh->prepare("SELECT typ, fnm, id from shop_img WHERE pid=? AND typ=? ORDER BY seq ASC");
@@ -78,37 +72,24 @@ function thumbs($pid,$typ) {
 		$fnm = $row["fnm"];
 		$fnm = preg_replace('/(.*)(\.[\w\d]{3})/', '$1_thu$2', $fnm);
 		$id = $row["id"];
-		$imgs[] = array('img'=>$img = "/content/cnt/i_".anum($pid)."/$fnm",'fnm'=>$fnm,'id'=>$id);
+		$imgs[] = array('img'=>$img = "/content/cnt/i_".a_num($pid)."/$fnm",'fnm'=>$fnm,'id'=>$id);
 	}
 	//var_dump($imgs);
 	return $imgs;
 }
 
-<<<<<<< HEAD
-=======
-/**
- * Images
- * @param  [type] $pid [description]
- * @param  string $typ [description]
- * @return [type]      [description]
- */
->>>>>>> FETCH_HEAD
-function imgs($pid,$tb="cnt") {
+function imgs($pid,$typ="cnt") {
 	$dbh = getDb();
-	$sth = $dbh->prepare("SELECT tb, fnm, id from images WHERE pid=? AND tb=? ORDER BY seq ASC");
-	$sth->execute(array($pid,$tb));
+	$sth = $dbh->prepare("SELECT typ, fnm, id from images WHERE pid=? AND typ=? ORDER BY seq ASC");
+	$sth->execute(array($pid,$typ));
 	$rows = $sth->fetchAll(PDO::FETCH_ASSOC);
 	$baseUrl = getBaseUrl();
 	$imgs = "";
 	foreach($rows as $row) {
-		$tb = $row["tb"];
+		$typ = $row["typ"];
 		$fnm = $row["fnm"];
 		$id = $row["id"];
-<<<<<<< HEAD
-		$imgs[] = array('path'=>$baseUrl."/content/".$tb."/i_".a_num($pid)."/$fnm",'fnm'=>$fnm,'id'=>$id);
-=======
-		$imgs[] = array('path'=>$baseUrl."/content/".$tb."/i_".anum($pid)."/$fnm",'fnm'=>$fnm,'id'=>$id);
->>>>>>> FETCH_HEAD
+		$imgs[] = array('img'=>$baseUrl."/content/i_".a_num($pid)."/$fnm",'fnm'=>$fnm,'id'=>$id);
 	}
 	return $imgs;
 }
@@ -118,21 +99,11 @@ if(isset($_GET['item'])) {
 	    $sql[] = "UPDATE `table` SET `position` = $position WHERE `id` = $item";
 	}
 }
-
+/* make thumbnail */
 function add_nm($fnm, $add){
 	$pp = pathinfo($fnm);
 	return $pp['filename'].$add.".".$pp['extension'];
 }
-
-/**
- * Create thumbnail
- * @param  [type]  $path  [description]
- * @param  [type]  $fn    [description]
- * @param  integer $nw    [description]
- * @param  string  $props [description]
- * @param  string  $sfx   [description]
- * @return [type]         [description]
- */
 function thu($path, $fn, $nw=900, $props="", $sfx="_thu"){
 	$th_n = add_nm($fn, $sfx);
 		if (!file_exists("$path/$fn")){
